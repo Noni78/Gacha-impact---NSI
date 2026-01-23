@@ -2,292 +2,307 @@ import customtkinter as ctk
 import random
 from PIL import Image
 
-# --- Paramètres fenêtre ---
+
+# ---------------- FENÊTRE ----------------
 height_ = 600
-dimensions = (int((16/10)*height_), height_)
+dimensions = (int((16 / 10) * height_), height_)
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 fenetre = ctk.CTk()
 fenetre.title("Gacha Impact")
 fenetre.geometry(f"{dimensions[0]}x{dimensions[1]}")
 fenetre.resizable(False, False)
+content_frame = ctk.CTkFrame(
+    fenetre,
+    fg_color="transparent",
+    bg_color="transparent"
+)
 
-# --- Paramètres voeu ---
-pity_5_star = 0
-pity_4_star = 9
+# ---------------- PITY ----------------
+pity_5_star = 80
+pity_4_star = 0
 soft_pity = 70
 hard_pity = 90
-in_wish = False
+wish_state = "ready"
+guaranteed_5_star = False
 
 
-# --- Fonctions ---
-def rarete():
-    """Détermine rareté"""
-    global pity_5_star, pity_4_star
+# ---------------- PERSONNAGES ----------------
+characters = {
+    "5★": [
+        {"name": "Columbina", "image": "doc/5_star/Columbina.png"},
+        {"name": "Zhongli", "image": "doc/5_star/Zhongli.png"},
+    ],
+    "5★ permanent": [
+        {"name": "Qiqi", "image": "doc/5_star/Qiqi.png"},
+    ],
 
-    weight_5_star = 0.006
-    weight_4_star = 0.051
+    "4★": [
+        {"name": "Bennett", "image": "doc/4_star/Bennett.png"},
+    ],
 
-    # Hard pity 5★
-    if pity_5_star >= hard_pity:
-        rarete_tirage = "5★"
-        pity_5_star = 0
-        pity_4_star += 1
-
-    # Pity 4★
-    elif pity_4_star >= 10:
-        rarete_tirage = "4★"
-        pity_4_star = 0
-        pity_5_star += 1
-
-    else:
-        # Soft pity
-        if pity_5_star > soft_pity:
-            weight_5_star += (pity_5_star - soft_pity) * (
-                (1.0 - 0.006) / (hard_pity - soft_pity)
-            )
-
-        weight_5_star = min(weight_5_star, 1.0 - weight_4_star)
-        weight_3_star = 1.0 - weight_4_star - weight_5_star
-
-        tirage = random.choices(
-            ["5★", "4★", "3★"],
-            [weight_5_star, weight_4_star, weight_3_star]
-        )[0]
-
-        rarete_tirage = tirage
-
-        if tirage == "5★":
-            pity_5_star = 0
-            pity_4_star += 1
-
-        elif tirage == "4★":
-            pity_4_star = 0
-            pity_5_star += 1
-
-        else:
-            pity_5_star += 1
-            pity_4_star += 1
-
-    return rarete_tirage, pity_5_star
+    "3★": [
+        {"name": "Thrilling Tale of Dragon Slayer", "image": "doc/3_star/TTDS.png"},
+        {"name": "Ferrous Shadow", "image": "doc/3_star/Ferrous_Shadow.png"},
+    ]
+}
 
 
-def resize_image(image_path, max_width, max_height):
-    img = Image.open(image_path)
-    img.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
+# ---------------- UTILS ----------------
+
+def get_random_character(rarity):
+    return random.choice(characters[rarity])
+
+def resize_image(path, max_w, max_h):
+    img = Image.open(path)
+    img.thumbnail((max_w, max_h), Image.Resampling.LANCZOS)
     return img
 
+def load_character_image(path):
+    img = resize_image(
+        path,
+        dimensions[0],
+        int(dimensions[1] * 0.88)
+    )
+    return ctk.CTkImage(img, size=img.size)
 
-def resize_gif_frames(path, max_width, max_height):
+def resize_gif_frames(path, max_w, max_h):
+
     frames = []
 
     try:
         gif = Image.open(path)
 
         while True:
+
             frame = gif.copy()
-            frame.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
+            frame.thumbnail((max_w, max_h), Image.Resampling.LANCZOS)
 
             frames.append(
                 ctk.CTkImage(
                     light_image=frame,
-                    size=(max_width, max_height)
+                    size=(max_w, max_h)
                 )
             )
 
             gif.seek(len(frames))
 
-    except EOFError:
-        pass
-    except FileNotFoundError:
+    except:
         pass
 
     return frames
 
 
-def voeu():
-    global in_wish
+# ---------------- RARETÉ ----------------
 
-    if in_wish:
-        return
+def rarete():
 
-    in_wish = True
+    global pity_5_star, pity_4_star
 
-    rarete_tirage, pity = rarete()
+    w5 = 0.006
+    w4 = 0.051
 
-    wish_button_1.pack_forget()
 
-    if rarete_tirage == "5★":
-        frames = frames_5
-    elif rarete_tirage == "4★":
-        frames = frames_4
+    # Hard pity
+    if pity_5_star >= hard_pity:
+
+        pity_5_star = 0
+        pity_4_star += 1
+
+        return "5★"
+
+
+    # Pity 4*
+    if pity_4_star >= 10:
+
+        pity_4_star = 0
+        pity_5_star += 1
+
+        return "4★"
+
+
+    # Soft pity
+    if pity_5_star > soft_pity:
+
+        w5 += (pity_5_star - soft_pity) * (
+            (1 - 0.006) / (hard_pity - soft_pity)
+        )
+
+
+    w5 = min(w5, 1 - w4)
+    w3 = 1 - w4 - w5
+
+
+    tirage = random.choices(
+        ["5★", "4★", "3★"],
+        [w5, w4, w3]
+    )[0]
+
+
+    if tirage == "5★":
+        pity_5_star = 0
+        pity_4_star += 1
+
+    elif tirage == "4★":
+        pity_4_star = 0
+        pity_5_star += 1
+
     else:
-        frames = frames_3
-
-    if frames:
-        play_animation(0, rarete_tirage, frames, pity)
-    else:
-        fenetre.after(500, lambda: show_splash(rarete_tirage, pity))
+        pity_5_star += 1
+        pity_4_star += 1
 
 
-def play_animation(frame_index, rarete_tirage, frames, pity):
+    return tirage
 
-    if frame_index < len(frames):
+
+# ---------------- ANIMATION ----------------
+
+def play_animation(i, rarity, frames):
+
+    if i < len(frames):
 
         image_label.configure(
-            image=frames[frame_index],
+            image=frames[i],
             text=""
         )
 
         fenetre.after(
             33,
-            lambda: play_animation(
-                frame_index + 1,
-                rarete_tirage,
-                frames,
-                pity
-            )
+            lambda: play_animation(i + 1, rarity, frames)
         )
 
     else:
-        show_splash(rarete_tirage, pity)
+        show_splash(rarity)
 
 
-def show_splash(rarete_tirage, pity):
-    global in_wish
+# ---------------- WISH ----------------
 
-    if rarete_tirage == "5★":
-        image_label.configure(image=splash_5_star, text="")
+def voeu():
 
-    elif rarete_tirage == "4★":
-        image_label.configure(image=splash_4_star, text="")
+    global wish_state
+
+    wish_state = "in_progress"
+
+    rarity = rarete()
+
+    wish_button.pack_forget()
+
+
+    if rarity == "5★":
+        frames = wishing_animation_5_stars
+
+    elif rarity == "4★":
+        frames = wishing_animation_4_stars
 
     else:
-        image_label.configure(image=splash_3_star, text="")
+        frames = wishing_animation_3_stars
+    if frames:
+        play_animation(0, rarity, frames)
 
-    pity_label.configure(text=f"Pity : {pity}")
+    else:
+        if rarity == "5★" and not guaranteed_5_star and random.random() < 0.5:
+            perso = get_random_character("5★ permanent")
+            guaranteed_5_star = True
+            show_splash("5★ permanent", perso)
+        else:
+            perso = get_random_character(rarity)
+            guaranteed_5_star = False
+            show_splash(rarity, perso)
 
-    pity_label.place(
-        x=dimensions[0] - 150,
-        y=20,
-        width=130,
-        height=50
+# ---------------- RESULTAT ----------------
+
+def show_splash(rarity, perso=None):
+
+    global wish_state
+
+    wish_state = "finished"
+
+    if perso is None:
+        if rarity == "5★" and random.random() < 0.5:
+            perso = get_random_character("5★ permanent")
+            actual_rarity = "5★ permanent"
+        else:
+            perso = get_random_character(rarity)
+            actual_rarity = rarity
+    else:
+        actual_rarity = rarity
+
+    image = load_character_image(perso["image"])
+
+    image_label.configure(
+        image=image,
+        text=f'{actual_rarity}  -  {perso["name"]}',
+        compound="top",         
+        anchor="n",             
+        justify="center"
     )
 
-    wish_button_1.pack(pady=10)
-
-    in_wish = False
+    image_label.image = image
 
 
-def hide_image():
-    global in_wish
+def hide_splash():
 
-    if in_wish:
-        in_wish = False
+    global wish_state
+
+    if wish_state == "finished":
+
+        wish_state = "ready"
+
         image_label.configure(
             image="",
-            text="Bienvenue dans Gacha Impact!"
-            )
+            text=f"Pity : {pity_5_star}"
+        )
 
-        pity_label.place_forget()
-    wish_button_1.pack(pady=10)
-
-
-# --- Charger images ---
-try:
-    img_5 = resize_image(
-        "doc/5_star/Columbina.png",
-        dimensions[0],
-        int(dimensions[1] * 0.88)
-    )
-
-    img_4 = resize_image(
-        "doc/4_star/Bennett.png",
-        dimensions[0],
-        int(dimensions[1] * 0.88)
-    )
-
-    img_3 = resize_image(
-        "doc/3_star/TTDS.png",
-        dimensions[0],
-        int(dimensions[1] * 0.88)
-    )
-
-    splash_5_star = ctk.CTkImage(img_5, size=img_5.size)
-    splash_4_star = ctk.CTkImage(img_4, size=img_4.size)
-    splash_3_star = ctk.CTkImage(img_3, size=img_3.size)
-
-    frames_5 = resize_gif_frames(
-        "doc/5_star/animation_5.gif",
-        dimensions[0],
-        int(dimensions[1] * 0.88)
-    )
-
-    frames_4 = resize_gif_frames(
-        "doc/4_star/animation_4.gif",
-        dimensions[0],
-        int(dimensions[1] * 0.88)
-    )
-
-    frames_3 = resize_gif_frames(
-        "doc/3_star/animation_3.gif",
-        dimensions[0],
-        int(dimensions[1] * 0.88)
-    )
-
-except FileNotFoundError:
-
-    splash_5_star = splash_4_star = splash_3_star = None
-    frames_5 = frames_4 = frames_3 = []
+        wish_button.pack(pady=10)
 
 
-# --- Label principal ---
+# ---------------- GIFS ----------------
+
+wishing_animation_5_stars = resize_gif_frames(
+    "doc/5_star/animation_5.gif",
+    dimensions[0],
+    int(dimensions[1] * 0.88)
+)
+
+wishing_animation_4_stars = resize_gif_frames(
+    "doc/4_star/animation_4.gif",
+    dimensions[0],
+    int(dimensions[1] * 0.88)
+)
+
+wishing_animation_3_stars = resize_gif_frames(
+    "doc/3_star/animation_3.gif",
+    dimensions[0],
+    int(dimensions[1] * 0.88)
+)
+
+
+# ---------------- UI ----------------
+
 image_label = ctk.CTkLabel(
     fenetre,
-    text="Bienvenue dans Gacha Impact!",
-    text_color="white",
-    font=("Cinzel", 14),
-    image=None,
+    text="Bienvenue dans Gacha Impact",
+    font=("Cinzel", 16),
     width=dimensions[0],
-    height=int(dimensions[1] * 0.88),
-    fg_color="transparent"
+    height=int(dimensions[1] * 0.88)
 )
 
-image_label.pack(fill="both", expand=True, padx=5, pady=5)
+image_label.pack(fill="both", expand=True)
+image_label.bind("<Button-1>", lambda e: hide_splash())
 
-image_label.bind("<Button-1>", lambda e: hide_image())
-
-
-# --- Label pity ---
-pity_label = ctk.CTkLabel(
-    fenetre,
-    text="Pity : 0",
-    text_color="white",
-    font=("Cinzel", 16, "bold"),
-    fg_color="#1a1a1a",
-    corner_radius=10
-)
-
-
-# --- Bouton voeu ---
-wish_button_1 = ctk.CTkButton(
-    fenetre,
+wish_button = ctk.CTkButton(
+    content_frame,
     text="Faire un vœu",
     width=200,
     height=50,
-    corner_radius=20,
-    fg_color="#4f6ef7",
-    hover_color="#6f8eff",
-    text_color="white",
     font=("Cinzel", 16, "bold"),
-    border_width=2,
-    border_color="#2e4fb8"
+    command=voeu
 )
 
-wish_button_1.pack(pady=10)
+wish_button.pack(pady=10)
+content_frame.pack(fill="both", expand=True)
 
-wish_button_1.bind("<ButtonRelease-1>", lambda e: voeu())
 
+# ---------------- START ----------------
 
-# --- Lancement ---
 fenetre.mainloop()
