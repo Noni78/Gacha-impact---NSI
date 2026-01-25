@@ -4,7 +4,7 @@ import random
 import cv2
 
 pygame.init()
-HEIGHT = 500
+HEIGHT = 600
 WIDTH = int(HEIGHT*16/9)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -97,7 +97,7 @@ current_banner_index = 0
 banniere_path = characters["5_star"][current_banner_index]["banniere"]
 banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)
 
-# --- Boutons Voeu ---
+# --- Boutons Voeux ---
 button_height = int(HEIGHT * 60 / 900)
 button_width = int(HEIGHT * 200 / 900)
 button_spacing = int(HEIGHT * 20 / 900)
@@ -146,7 +146,7 @@ def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90):
     """
 
     w5 = 0.006
-    w4 = 0.051
+    w4 = 0.08
 
     # Hard pity
     if pity_5_star >= hard_pity:
@@ -222,7 +222,7 @@ def faire_un_voeu(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, har
     
     if wish_rarete == "4_star":
         featured_4_stars = characters["5_star"][current_banner_index].get("featured_4_star", [])
-        if featured_4_stars and random.random() < 0.5:  
+        if featured_4_stars and random.random() < 0.8:  
             # Featured 4★
             featured_chars = [c for c in characters["4_star"] if c["name"] in featured_4_stars]
             wish_result_character = random.choice(featured_chars)
@@ -435,9 +435,8 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-            
+
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-            # --- Voeux ---
             if button_x1_rect.collidepoint(event.pos):
                 result = faire_un_voeu(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity, hard_pity, current_banner_index)
                 wish_rarete = result["rarete"]
@@ -468,17 +467,16 @@ while running:
                     wish_rarete = None
                     wish_splash_art = None
 
-            # --- Clic sur boutons bannière ---
-            for i, (rect, name) in enumerate(left_buttons):
-                if rect.collidepoint(event.pos):
-                    current_banner_index = i
-                    banniere_path = characters["5_star"][current_banner_index]["banniere"]
-                    banniere = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)[0]
-                    wish_splash_art = None  
-                    
-            if wish_splash_art is not None:
+            elif wish_splash_art is not None:
                 wish_rarete = None
                 wish_splash_art = None
+            else:
+                for i, (rect, name) in enumerate(left_buttons):
+                    if rect.collidepoint(event.pos):
+                        current_banner_index = i
+                        banniere_path = characters["5_star"][current_banner_index]["banniere"]
+                        banniere = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)[0]
+                        wish_splash_art = None
     
     pygame.display.flip()
     delta_time = clock.tick(60)/1000
