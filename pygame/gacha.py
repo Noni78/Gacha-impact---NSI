@@ -87,7 +87,7 @@ characters = {
         {"name": "Yun Jin", "image": "pygame/img/4_star/Yun_Jin.png", "type": None},
     ],
     "3_star": [
-        {"name": "Thrilling Tale of Dragon Slayer", "image": "pygame/img/3_star/TTDS.png", "type": "catalyst"},
+        {"name": "Thrilling Tale of Dragon Slayer", "image": "pygame/img/3_star/Thrilling_Tale_of_Dragon_Slayer.png", "type": "catalyst"},
         {"name": "Ferrous Shadow", "image": "pygame/img/3_star/Ferrous_Shadow.png","type": "claymore"},
         {"name": "Slingshot", "image": "pygame/img/3_star/Slingshot.png", "type": "bow"},
         {"name": "Black Tassel", "image": "pygame/img/3_star/Black_tassel.png", "type": "polearm"},
@@ -352,77 +352,258 @@ def weapon_background_path(weapon):
     """
     return pygame.image.load(f"pygame/img/Weapon_Background/{weapon}.png").convert_alpha()
 
+def ecran_multi(results, screen):
+    """
+    Affiche l'écran récapitulatif après une multi
+    """
+
+    clock = pygame.time.Clock()
+    running = True
+
+    images = []
+
+    # Charger images
+    for res in results:
+
+        name = res["character"]["name"].replace(" ", "_")
+
+        if res["rarete"] in ["5_star", "5_star_perma"]:
+            path = f"pygame/img/5_star/multi/{name}.png"
+
+        elif res["rarete"] == "4_star":
+            path = f"pygame/img/4_star/multi/{name}.png"
+
+        else:
+            path = f"pygame/img/3_star/{name}.png"
+
+        try:
+            img = pygame.image.load(path).convert_alpha()
+            images.append(img)
+        except:
+            images.append(None)
+
+    # Largeur cible = écran / 10
+    cell_width = WIDTH // 10
+
+    scaled_images = []
+
+    for img in images:
+
+        if img is None:
+            scaled_images.append(None)
+            continue
+
+        scale = cell_width / img.get_width()
+
+        new_w = cell_width
+        new_h = int(img.get_height() * scale)
+
+        img = pygame.transform.scale(
+            img,
+            (new_w, new_h)
+        )
+
+        scaled_images.append(img)
+
+    while running:
+
+        screen.fill((0, 0, 0))
+
+        screen.blit(
+            background_wishing,
+            (WIDTH//2 - background_wishing.get_width()//2,
+            HEIGHT//2 - background_wishing.get_height()//2)
+        )
+
+        # Centrage vertical
+        max_h = max(img.get_height() for img in scaled_images if img)
+
+        y = HEIGHT//2 - max_h//2
+
+        x = 0
+
+        # Affichage collé
+        for img in scaled_images:
+
+            if img:
+                screen.blit(img, (x, y))
+
+            x += cell_width
+
+
+        # Instruction
+        text = button_font.render(
+            "Clique / Espace pour continuer",
+            True,
+            (255, 255, 255)
+        )
+
+        screen.blit(
+            text,
+            (WIDTH//2 - text.get_width()//2,
+            HEIGHT - 50)
+        )
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                return False
+
+            if event.type == pygame.KEYDOWN:
+                if event.key in [pygame.K_SPACE, pygame.K_ESCAPE]:
+                    return True
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    return True
+
+        pygame.display.flip()
+        clock.tick(60)
+
+    return True
+
 def afficher_resultats(results, screen): 
     """
-    Affiche les résultats des voeux un par un 
-    
-    Args:
-        results (list): liste des résultats des vœux
-        screen: surface pygame
-    
-    Returns:
-        tuple: (bool, bool) - (continue_running, reset_to_banniere)
+    Affiche les résultats un par un puis écran multi final
     """
+
     current_index = 0
     showing_results = True
     clock = pygame.time.Clock()
     animation_progress = 0.0  
-    
+
     counter_y = int(HEIGHT * 50 / 900)
     name_y = int(HEIGHT * 100 / 900)
     instruction_y = int(HEIGHT * 50 / 900)
-    
+
     while showing_results:
+
         mouse_pos = pygame.mouse.get_pos()
-        
+
         screen.fill((255, 255, 255))
-        screen.blit(background_wishing, (WIDTH//2 - background_wishing.get_width()//2, HEIGHT//2 - background_wishing.get_height()//2))
-        
+
+        screen.blit(
+            background_wishing,
+            (WIDTH//2 - background_wishing.get_width()//2,
+            HEIGHT//2 - background_wishing.get_height()//2)
+        )
+
         current_result = results[current_index]
 
+        # Background arme
         if current_result["character"]["type"] is not None:
-            weapon_BG = scale_to_height(weapon_background_path(current_result["character"]["type"]),HEIGHT//2.5)
-            screen.blit(weapon_BG, (WIDTH//2 - weapon_BG.get_width()//2, HEIGHT//2 - weapon_BG.get_height()//2))
-            
-        afficher_splash_art(screen, current_result["splash_art"], animation_progress)
-        
+
+            weapon_BG = scale_to_height(
+                weapon_background_path(
+                    current_result["character"]["type"]
+                ),
+                HEIGHT//2.5
+            )
+
+            screen.blit(
+                weapon_BG,
+                (WIDTH//2 - weapon_BG.get_width()//2,
+                HEIGHT//2 - weapon_BG.get_height()//2)
+            )
+
+        afficher_splash_art(
+            screen,
+            current_result["splash_art"],
+            animation_progress
+        )
+
         if animation_progress < 1.0:
             animation_progress += 0.08  
-        
-        counter_text = font.render(f"{current_index + 1}/{len(results)}", True, (255, 255, 255))
-        screen.blit(counter_text, (WIDTH//2 - counter_text.get_width()//2, counter_y))
-        
-        char_name = button_font.render(current_result["character"]["name"], True, (255, 255, 255))
-        screen.blit(char_name, (WIDTH//2 - char_name.get_width()//2, HEIGHT - name_y))
-        
-        
-        instruction = button_font.render("Clic ou Espace pour continuer - Echap pour quitter", True, (255, 255, 255))
-        screen.blit(instruction, (WIDTH//2 - instruction.get_width()//2, HEIGHT - instruction_y))
-        
+
+        counter_text = font.render(
+            f"{current_index + 1}/{len(results)}",
+            True,
+            (255, 255, 255)
+        )
+
+        screen.blit(
+            counter_text,
+            (WIDTH//2 - counter_text.get_width()//2,
+            counter_y)
+        )
+
+        char_name = button_font.render(
+            current_result["character"]["name"],
+            True,
+            (255, 255, 255)
+        )
+
+        screen.blit(
+            char_name,
+            (WIDTH//2 - char_name.get_width()//2,
+            HEIGHT - name_y)
+        )
+
+        instruction = button_font.render(
+            "Clic / Espace - Echap = quitter",
+            True,
+            (255, 255, 255)
+        )
+
+        screen.blit(
+            instruction,
+            (WIDTH//2 - instruction.get_width()//2,
+            HEIGHT - instruction_y)
+        )
+
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 return False, False
+
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE or event.key == pygame.K_RIGHT:
+
+                if event.key in [pygame.K_SPACE, pygame.K_RIGHT]:
+
                     current_index += 1
                     animation_progress = 0.0 
+
+                    # FIN → écran multi
                     if current_index >= len(results):
-                        return True, True  
+
+                        ok = ecran_multi(results, screen)
+
+                        if not ok:
+                            return False, False
+
+                        return True, True
+
+
                 elif event.key == pygame.K_LEFT and current_index > 0:
+
                     current_index -= 1
                     animation_progress = 0.0
+
+
                 elif event.key == pygame.K_ESCAPE:
                     return True, True  
+
+
             if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1: 
+
+                if event.button == 1:
+
                     current_index += 1
                     animation_progress = 0.0  
+
                     if current_index >= len(results):
-                        return True, True  
-        
+
+                        ok = ecran_multi(results, screen)
+
+                        if not ok:
+                            return False, False
+
+                        return True, True
+
+
         pygame.display.flip()
         clock.tick(60)
-    
+
     return True, True
 
 # --- Boucle principale ---
