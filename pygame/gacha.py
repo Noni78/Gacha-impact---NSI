@@ -35,6 +35,13 @@ characters = {
             "featured_4_star": ["Diona", "Candace", "Dahlia"],
             "type": None
         },
+        {
+            "name": "Mavuika", 
+            "image": "pygame/img/5_star/Mavuika.png", 
+            "banniere": "pygame/img/banniere/Mavuika.jpg",
+            "featured_4_star": ["Xiangling", "Yaoyao", "Iansan"],
+            "type": None
+        },
     ],
     "5_star_perma": [
         {"name": "Qiqi", "image": "pygame/img/5_star/Qiqi.png","type": None},
@@ -54,9 +61,12 @@ characters = {
         {"name": "Diona", "image": "pygame/img/4_star/Diona.png", "type": None},
         {"name": "Fischl", "image": "pygame/img/4_star/Fischl.png", "type": None},
         {"name": "Ifa", "image": "pygame/img/4_star/Ifa.png", "type": None},
+        {"name": "Iansan", "image": "pygame/img/4_star/Iansan.png", "type": None},
         {"name": "Lan Yan", "image": "pygame/img/4_star/Lan_Yan.png", "type": None},
         {"name": "Rosaria", "image": "pygame/img/4_star/Rosaria.png", "type": None},
         {"name": "Yun Jin", "image": "pygame/img/4_star/Yun_Jin.png", "type": None},
+        {"name": "Yaoyao", "image": "pygame/img/4_star/Yaoyao.png", "type": None},
+        {"name": "Xiangling", "image": "pygame/img/4_star/Xiangling.png", "type": None},
     ],
     "3_star": [
         {"name": "Thrilling Tale of Dragon Slayer", "image": "pygame/img/3_star/Thrilling_Tale_of_Dragon_Slayer.png", "type": "catalyst"},
