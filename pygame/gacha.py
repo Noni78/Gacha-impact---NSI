@@ -3,34 +3,6 @@ import sys
 import random
 import cv2
 
-pygame.init()
-HEIGHT = 900
-WIDTH = int(HEIGHT*16/9)
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Totally not a Genshin Impact wishing replica")
-pygame.display.set_icon(pygame.image.load("pygame/img/icon.png").convert_alpha())
-font_size = int(HEIGHT * 40 / 900)  
-font = pygame.font.Font("pygame/font/genshin.ttf", font_size)
-button_font_size = int(HEIGHT * 30 / 900)
-button_font = pygame.font.Font("pygame/font/genshin.ttf", button_font_size)
-
-def scale_to_height(image, target_height):
-    w, h = image.get_size()
-    scale_factor = target_height / h
-    new_w = int(w * scale_factor)
-    new_h = target_height
-    return pygame.transform.scale(image, (new_w, new_h))
-
-def scale_with_borders(image, target_width, target_height, border_percent=15):
-    border_w = int(target_width * border_percent / 100)
-    border_h = int(target_height * border_percent / 100)
-    new_width = target_width - (2 * border_w)
-    new_height = target_height - (2 * border_h)
-    return pygame.transform.scale(image, (new_width, new_height)), border_w, border_h
-
-background = scale_to_height(pygame.image.load("pygame/img/background.png").convert_alpha(), HEIGHT)
-background_wishing = scale_to_height(pygame.image.load("pygame/img/background_wishing.png").convert_alpha(), HEIGHT)
-
 # --- Paramètres Voeu ---
 pity_5_star = 80
 pity_4_star = 1
@@ -94,6 +66,36 @@ characters = {
         {"name": "Cool Steel", "image": "pygame/img/3_star/Cool_Steel.png", "type": "sword"},  
     ]
 }
+# --- Initalisation ---
+pygame.init()
+HEIGHT = 660
+WIDTH = int(HEIGHT*16/9)
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Totally not a Genshin Impact wishing replica")
+pygame.display.set_icon(pygame.image.load("pygame/img/icon.png").convert_alpha())
+font_size = int(HEIGHT * 40 / 900)  
+font = pygame.font.Font("pygame/font/genshin.ttf", font_size)
+button_font_size = int(HEIGHT * 30 / 900)
+button_font = pygame.font.Font("pygame/font/genshin.ttf", button_font_size)
+
+def scale_to_height(image, target_height):
+    w, h = image.get_size()
+    scale_factor = target_height / h
+    new_w = int(w * scale_factor)
+    new_h = target_height
+    return pygame.transform.scale(image, (new_w, new_h))
+
+def scale_with_borders(image, target_width, target_height, border_percent=15):
+    border_w = int(target_width * border_percent / 100)
+    border_h = int(target_height * border_percent / 100)
+    new_width = target_width - (2 * border_w)
+    new_height = target_height - (2 * border_h)
+    return pygame.transform.scale(image, (new_width, new_height)), border_w, border_h
+
+background = scale_to_height(pygame.image.load("pygame/img/background.png").convert_alpha(), HEIGHT)
+background_wishing = scale_to_height(pygame.image.load("pygame/img/background_wishing.png").convert_alpha(), HEIGHT)
+
+
 
 # --- Initialisation bannière ---
 current_banner_index = 0  
@@ -171,7 +173,7 @@ def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90):
         str: "5_star", "4_star" ou "3_star" selon le tirage aléatoire pondéré.
     """
 
-    w5 = 0.006
+    w5 = 0.1
     w4 = 0.08
 
     if pity_5_star >= hard_pity:
@@ -352,105 +354,76 @@ def weapon_background_path(weapon):
     """
     return pygame.image.load(f"pygame/img/Weapon_Background/{weapon}.png").convert_alpha()
 
-def ecran_multi(results, screen):
+def darken(c, coefficient=0.5):
+        return tuple(int(i * coefficient) for i in c)
+
+def get_color(rare:str):
+
+        if rare in ["5_star", "5_star_perma"]:
+            return (220, 190, 20)
+
+        if rare == "4_star":
+            return (140, 80, 205)
+
+        return (80, 140, 225)
+
+def ecran_multi(results, screen, radius=60,border=5,ecart=5):
     """
-    Écran multi avec panels arrondis
+    Écran résumé de la multi
     """
 
     clock = pygame.time.Clock()
     running = True
-
+    rarete_priority = {"5_star": 1, "5_star_perma": 2, "4_star": 3, "3_star": 4}
+    results = sorted(results, key=lambda x: rarete_priority[x["rarete"]])
     images = []
     raretes = []
-
-    # Charger images
     for res in results:
-
         name = res["character"]["name"].replace(" ", "_")
         rarete = res["rarete"]
-
         if rarete in ["5_star", "5_star_perma"]:
             path = f"pygame/img/5_star/multi/{name}.png"
-
         elif rarete == "4_star":
             path = f"pygame/img/4_star/multi/{name}.png"
-
         else:
             path = f"pygame/img/3_star/{name}.png"
-
         try:
             img = pygame.image.load(path).convert_alpha()
             images.append(img)
         except:
             images.append(None)
-
         raretes.append(rarete)
-
-    # Largeur par case
-    cell_width = WIDTH // 10
-
+    
+    cell_width = WIDTH // 11
     scaled_images = []
-
     for img in images:
-
         if img is None:
             scaled_images.append(None)
             continue
-
         scale = cell_width / img.get_width()
-
         new_w = cell_width
         new_h = int(img.get_height() * scale)
-
         img = pygame.transform.scale(img, (new_w, new_h))
-
         scaled_images.append(img)
 
-    # Couleurs rareté
-    def get_color(r):
-
-        if r in ["5_star", "5_star_perma"]:
-            return (255, 200, 60)
-
-        if r == "4_star":
-            return (190, 130, 255)
-
-        return (120, 170, 255)
-
-    def darken(c, k=0.75):
-        return tuple(int(x * k) for x in c)
-
-    # Style
-    radius = 18
-    border = 2
-
     while running:
-
         screen.fill((0, 0, 0))
-
         screen.blit(
             background_wishing,
             (WIDTH//2 - background_wishing.get_width()//2,
             HEIGHT//2 - background_wishing.get_height()//2)
         )
-
         max_h = max(img.get_height() for img in scaled_images if img)
-
         y = HEIGHT//2 - max_h//2
-        x = 0
+        x = (WIDTH - (cell_width * len(scaled_images) + 5 * (len(scaled_images) -1))) // 2
 
         for i, img in enumerate(scaled_images):
-
             color = get_color(raretes[i])
             border_color = darken(color)
-
-            # Surface du panel
             panel = pygame.Surface(
                 (cell_width, max_h),
                 pygame.SRCALPHA
             )
-
-            # Fond arrondi
             pygame.draw.rect(
                 panel,
                 color,
@@ -458,7 +431,27 @@ def ecran_multi(results, screen):
                 border_radius=radius
             )
 
-            # Bordure arrondie
+            if img:
+                mask = pygame.Surface(
+                    (cell_width, max_h),
+                    pygame.SRCALPHA
+                )
+                pygame.draw.rect(
+                    mask,
+                    (255, 255, 255, 255),
+                    mask.get_rect(),
+                    border_radius=radius
+                )
+                img_surface = pygame.Surface(
+                    (cell_width, max_h),
+                    pygame.SRCALPHA
+                )
+                img_x = (cell_width - img.get_width()) // 2
+                img_y = max_h - img.get_height()
+                img_surface.blit(img, (img_x, img_y))
+                img_surface.blit(mask, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+                panel.blit(img_surface, (0, 0))
+
             pygame.draw.rect(
                 panel,
                 border_color,
@@ -466,24 +459,12 @@ def ecran_multi(results, screen):
                 border,
                 border_radius=radius
             )
-
-            # Image
-            if img:
-
-                img_x = (cell_width - img.get_width()) // 2
-                img_y = max_h - img.get_height()
-
-                panel.blit(img, (img_x, img_y))
-
-            # Affichage
             screen.blit(panel, (x, y))
 
-            x += cell_width
+            x += cell_width + ecart
 
-
-        # Instruction
         text = button_font.render(
-            "Clique / Espace pour continuer",
+            "Clic / Espace pour continuer",
             True,
             (255, 255, 255)
         )
@@ -512,7 +493,6 @@ def ecran_multi(results, screen):
 
     return True
 
-
 def afficher_resultats(results, screen): 
     """
     Affiche les résultats un par un puis écran multi final
@@ -530,7 +510,6 @@ def afficher_resultats(results, screen):
     while showing_results:
 
         mouse_pos = pygame.mouse.get_pos()
-
         screen.fill((255, 255, 255))
 
         screen.blit(
@@ -590,7 +569,7 @@ def afficher_resultats(results, screen):
         )
 
         instruction = button_font.render(
-            "Clic / Espace - Echap = quitter",
+            "Clic / Espace / Echap => quitter",
             True,
             (255, 255, 255)
         )
@@ -602,53 +581,35 @@ def afficher_resultats(results, screen):
         )
 
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 return False, False
-
             if event.type == pygame.KEYDOWN:
-
                 if event.key in [pygame.K_SPACE, pygame.K_RIGHT]:
-
                     current_index += 1
                     animation_progress = 0.0 
-
                     if current_index >= len(results):
-
                         ok = ecran_multi(results, screen)
-
                         if not ok:
                             return False, False
 
                         return True, True
-
-
+                    
                 elif event.key == pygame.K_LEFT and current_index > 0:
-
                     current_index -= 1
                     animation_progress = 0.0
-
-
                 elif event.key == pygame.K_ESCAPE:
-
                     ok = ecran_multi(results, screen)
-
                     if not ok:
                         return False, False
 
                     return True, True
 
             if event.type == pygame.MOUSEBUTTONUP:
-
                 if event.button == 1:
-
                     current_index += 1
                     animation_progress = 0.0  
-
                     if current_index >= len(results):
-
                         ok = ecran_multi(results, screen)
-
                         if not ok:
                             return False, False
 
@@ -664,7 +625,6 @@ def afficher_resultats(results, screen):
 running = True
 clock = pygame.time.Clock()
 delta_time = 0.1
-title_y = int(HEIGHT * 20 / 900)
 pity_y = int(HEIGHT * 10 / 900)
 pity_y2 = int(HEIGHT * 50 / 900)
 pity_y3 = int(HEIGHT * 90 / 900)
