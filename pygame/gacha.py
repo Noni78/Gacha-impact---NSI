@@ -4,7 +4,7 @@ import random
 import cv2
 
 pygame.init()
-HEIGHT = 660
+HEIGHT = 900
 WIDTH = int(HEIGHT*16/9)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -381,9 +381,11 @@ def afficher_resultats(results, screen):
         screen.blit(background_wishing, (WIDTH//2 - background_wishing.get_width()//2, HEIGHT//2 - background_wishing.get_height()//2))
         
         current_result = results[current_index]
+
         if current_result["character"]["type"] is not None:
-            weapon_BG = weapon_background(current_result["character"]["type"])
-            screen.blit(weapon_BG, (WIDTH//2 - background_wishing.get_width()//2, HEIGHT//2 - background_wishing.get_height()//2))
+            weapon_BG = scale_to_height(weapon_background(current_result["character"]["type"]),HEIGHT//2.5)
+            screen.blit(weapon_BG, (WIDTH//2 - weapon_BG.get_width()//2, HEIGHT//2 - weapon_BG.get_height()//2))
+            
         afficher_splash_art(screen, current_result["splash_art"], animation_progress)
         
         if animation_progress < 1.0:
