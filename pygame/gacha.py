@@ -45,42 +45,45 @@ characters = {
             "name": "Columbina", 
             "image": "pygame/img/5_star/Columbina.png", 
             "banniere": "pygame/img/banniere/Columbina.jpg",
-            "featured_4_star": ["Ifa", "Sethos", "Fischl"]
+            "featured_4_star": ["Ifa", "Sethos", "Fischl"],
+            "type": None
         },
         {
             "name": "Zhongli", 
             "image": "pygame/img/5_star/Zhongli.png", 
             "banniere": "pygame/img/banniere/Zhongli.jpg",
-            "featured_4_star": ["Rosaria", "Lan Yan", "Yun Jin"]
+            "featured_4_star": ["Rosaria", "Lan Yan", "Yun Jin"],
+            "type": None
         },
         {
             "name": "Skirk", 
             "image": "pygame/img/5_star/Skirk.png", 
             "banniere": "pygame/img/banniere/Skirk.jpg",
-            "featured_4_star": ["Diona", "Candace", "Dahlia"]
+            "featured_4_star": ["Diona", "Candace", "Dahlia"],
+            "type": None
         },
     ],
     "5_star_perma": [
-        {"name": "Qiqi", "image": "pygame/img/5_star/Qiqi.png"},
-        {"name": "Dehya", "image": "pygame/img/5_star/Dehya.png"},
-        {"name": "Diluc", "image": "pygame/img/5_star/Diluc.png"},
-        {"name": "Jean", "image": "pygame/img/5_star/Jean.png"},
-        {"name": "Keqing", "image": "pygame/img/5_star/Keqing.png"},
-        {"name": "Mona", "image": "pygame/img/5_star/Mona.png"},
-        {"name": "Tighnari", "image": "pygame/img/5_star/Tighnari.png"},
-        {"name": "Yumemizuki Mizuki", "image": "pygame/img/5_star/Yumemizuki_Mizuki.png"},
+        {"name": "Qiqi", "image": "pygame/img/5_star/Qiqi.png","type": None},
+        {"name": "Dehya", "image": "pygame/img/5_star/Dehya.png","type": None},
+        {"name": "Diluc", "image": "pygame/img/5_star/Diluc.png", "type": None},
+        {"name": "Jean", "image": "pygame/img/5_star/Jean.png", "type": None},
+        {"name": "Keqing", "image": "pygame/img/5_star/Keqing.png", "type": None},
+        {"name": "Mona", "image": "pygame/img/5_star/Mona.png", "type": None},
+        {"name": "Tighnari", "image": "pygame/img/5_star/Tighnari.png", "type": None},
+        {"name": "Yumemizuki Mizuki", "image": "pygame/img/5_star/Yumemizuki_Mizuki.png", "type": None},
     ],
     "4_star": [
-        {"name": "Bennett", "image": "pygame/img/4_star/Bennett.png"},
-        {"name": "Sethos", "image": "pygame/img/4_star/Sethos.png"},
-        {"name": "Candace", "image": "pygame/img/4_star/Candace.png"},
-        {"name": "Dahlia", "image": "pygame/img/4_star/Dahlia.png"},
-        {"name": "Diona", "image": "pygame/img/4_star/Diona.png"},
-        {"name": "Fischl", "image": "pygame/img/4_star/Fischl.png"},
-        {"name": "Ifa", "image": "pygame/img/4_star/Ifa.png"},
-        {"name": "Lan Yan", "image": "pygame/img/4_star/Lan_Yan.png"},
-        {"name": "Rosaria", "image": "pygame/img/4_star/Rosaria.png"},
-        {"name": "Yun Jin", "image": "pygame/img/4_star/Yun_Jin.png"},
+        {"name": "Bennett", "image": "pygame/img/4_star/Bennett.png", "type": None},
+        {"name": "Sethos", "image": "pygame/img/4_star/Sethos.png", "type": None},
+        {"name": "Candace", "image": "pygame/img/4_star/Candace.png", "type": None},
+        {"name": "Dahlia", "image": "pygame/img/4_star/Dahlia.png", "type": None},
+        {"name": "Diona", "image": "pygame/img/4_star/Diona.png", "type": None},
+        {"name": "Fischl", "image": "pygame/img/4_star/Fischl.png", "type": None},
+        {"name": "Ifa", "image": "pygame/img/4_star/Ifa.png", "type": None},
+        {"name": "Lan Yan", "image": "pygame/img/4_star/Lan_Yan.png", "type": None},
+        {"name": "Rosaria", "image": "pygame/img/4_star/Rosaria.png", "type": None},
+        {"name": "Yun Jin", "image": "pygame/img/4_star/Yun_Jin.png", "type": None},
     ],
     "3_star": [
         {"name": "Thrilling Tale of Dragon Slayer", "image": "pygame/img/3_star/TTDS.png", "type": "catalyst"},
@@ -348,6 +351,9 @@ def draw_button(screen, rect, text, mouse_pos):
     text_rect = button_text.get_rect(center=rect.center)
     screen.blit(button_text, text_rect)
 
+def weapon_background(weapon):
+    return pygame.image.load(f"pygame/img/Weapon_Background/{weapon}.png").convert_alpha()
+
 def afficher_resultats(results, screen): 
     """
     Affiche les résultats des voeux un par un 
@@ -375,22 +381,21 @@ def afficher_resultats(results, screen):
         screen.blit(background_wishing, (WIDTH//2 - background_wishing.get_width()//2, HEIGHT//2 - background_wishing.get_height()//2))
         
         current_result = results[current_index]
-        
-        # Afficher avec animation
+        if current_result["character"]["type"] is not None:
+            weapon_BG = weapon_background(current_result["character"]["type"])
+            screen.blit(weapon_BG, (WIDTH//2 - background_wishing.get_width()//2, HEIGHT//2 - background_wishing.get_height()//2))
         afficher_splash_art(screen, current_result["splash_art"], animation_progress)
         
-        # Incrémenter l'animation
         if animation_progress < 1.0:
-            animation_progress += 0.08  # Vitesse d'animation
+            animation_progress += 0.08  
         
         counter_text = font.render(f"{current_index + 1}/{len(results)}", True, (255, 255, 255))
         screen.blit(counter_text, (WIDTH//2 - counter_text.get_width()//2, counter_y))
         
-        # Afficher le nom du personnage
         char_name = button_font.render(current_result["character"]["name"], True, (255, 255, 255))
         screen.blit(char_name, (WIDTH//2 - char_name.get_width()//2, HEIGHT - name_y))
         
-        # Instructions
+        
         instruction = button_font.render("Clic ou Espace pour continuer - Echap pour quitter", True, (255, 255, 255))
         screen.blit(instruction, (WIDTH//2 - instruction.get_width()//2, HEIGHT - instruction_y))
         
@@ -400,20 +405,20 @@ def afficher_resultats(results, screen):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE or event.key == pygame.K_RIGHT:
                     current_index += 1
-                    animation_progress = 0.0  # Reset animation
+                    animation_progress = 0.0 
                     if current_index >= len(results):
-                        return True, True  # Retour à la bannière
+                        return True, True  
                 elif event.key == pygame.K_LEFT and current_index > 0:
                     current_index -= 1
-                    animation_progress = 0.0  # Reset animation
+                    animation_progress = 0.0
                 elif event.key == pygame.K_ESCAPE:
-                    return True, True  # Retour à la bannière
+                    return True, True  
             if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:  # Clic gauche
+                if event.button == 1: 
                     current_index += 1
-                    animation_progress = 0.0  # Reset animation
+                    animation_progress = 0.0  
                     if current_index >= len(results):
-                        return True, True  # Retour à la bannière
+                        return True, True  
         
         pygame.display.flip()
         clock.tick(60)
