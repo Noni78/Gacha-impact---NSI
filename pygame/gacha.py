@@ -4,8 +4,8 @@ import random
 import cv2
 
 # --- Paramètres Voeu ---
-pity_5_star = 80
-pity_4_star = 1
+pity_5_star = 0
+pity_4_star = 0
 soft_pity = 73
 hard_pity = 90
 guaranteed_5_star = False
@@ -173,7 +173,7 @@ def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90):
         str: "5_star", "4_star" ou "3_star" selon le tirage aléatoire pondéré.
     """
 
-    w5 = 0.1
+    w5 = 0.006
     w4 = 0.08
 
     if pity_5_star >= hard_pity:
