@@ -7,11 +7,11 @@ pygame.init()
 HEIGHT = 900
 WIDTH = int(HEIGHT*16/9)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
+pygame.display.set_caption("Totally not a Genshin Impact wishing replica")
+pygame.display.set_icon(pygame.image.load("pygame/img/icon.png").convert_alpha())
 font_size = int(HEIGHT * 40 / 900)  
-button_font_size = int(HEIGHT * 30 / 900)
-
 font = pygame.font.Font("pygame/font/genshin.ttf", font_size)
+button_font_size = int(HEIGHT * 30 / 900)
 button_font = pygame.font.Font("pygame/font/genshin.ttf", button_font_size)
 
 def scale_to_height(image, target_height):
@@ -30,7 +30,8 @@ def scale_with_borders(image, target_width, target_height, border_percent=15):
 
 background = scale_to_height(pygame.image.load("pygame/img/background.png").convert_alpha(), HEIGHT)
 background_wishing = scale_to_height(pygame.image.load("pygame/img/background_wishing.png").convert_alpha(), HEIGHT)
-# --- Paramètres Gacha ---
+
+# --- Paramètres Voeu ---
 pity_5_star = 80
 pity_4_star = 1
 soft_pity = 73
@@ -134,7 +135,7 @@ def draw_left_buttons(screen, mouse_pos):
 
 def afficher_splash_art(screen, splash_art, progress=1.0):
     """
-    Affiche le splash art avec effet de zoom/déformation comme Genshin Impact
+    'anime' le splash art
     
     Args:
         screen: surface pygame
@@ -161,27 +162,24 @@ def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90):
     Calcule la rareté d'un tirage sans modifier les compteurs de pity.
     
     Args:
-        pity_5_star (int): compteur actuel de 5★
-        pity_4_star (int): compteur actuel de 4★
+        pity_5_star (int): compteur actuel pity 5★
+        pity_4_star (int): compteur actuel pity 4★
         soft_pity (int, optional): début de la soft pity pour 5★. Défaut 70
         hard_pity (int, optional): hard pity pour 5★. Défaut 90
 
     Returns:
-        str: "5_star", "4_star" ou "3_star" selon le tirage
+        str: "5_star", "4_star" ou "3_star" selon le tirage aléatoire pondéré.
     """
 
     w5 = 0.006
     w4 = 0.08
 
-    # Hard pity
     if pity_5_star >= hard_pity:
         return "5_star"
 
-    # Pity 4*
     if pity_4_star >= 9:
         return "4_star"
 
-    # Soft pity
     if pity_5_star > soft_pity:
         w5 += (pity_5_star - soft_pity) * ((1 - 0.006) / (hard_pity - soft_pity))
 
@@ -197,12 +195,12 @@ def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90):
 
 def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90, current_banner_index=0):
     """
-    Effectue un vœu et retourne tous les résultats.
+    Effectue 1 voeuu et retourne tous les résultats.
     
     Args:
-        pity_5_star (int): compteur actuel de 5★
-        pity_4_star (int): compteur actuel de 4★
-        guaranteed_5_star (bool): si le prochain 5★ est garanti featured
+        pity_5_star (int): compteur actuel pity 5★
+        pity_4_star (int): compteur actuel pity 4★
+        guaranteed_5_star (bool): True si le prochain 5★ est garanti 
         soft_pity (int, optional): début de la soft pity pour 5★. Défaut 70
         hard_pity (int, optional): hard pity pour 5★. Défaut 90
         current_banner_index (int): index de la bannière actuelle
@@ -211,10 +209,10 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
         dict: {
             "rarete": str,  # "5_star", "5_star_perma", "4_star" ou "3_star"
             "character": dict,  # le personnage obtenu
-            "animation": str,  # chemin de la vidéo
-            "splash_art": pygame.Surface,  # l'image du personnage
-            "new_pity_5_star": int,  # nouveau compteur 5★
-            "new_pity_4_star": int,  # nouveau compteur 4★
+            "animation": str,  # chemin d'animaton de voeu
+            "splash_art": pygame.Surface,  #image du personnage
+            "new_pity_5_star": int,  # nouvelle pity 5★
+            "new_pity_4_star": int,  # nouvelle pity 4★
             "new_guaranteed_5_star": bool  # nouveau statut guaranteed
         }
     """
@@ -228,7 +226,6 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
         new_pity_5_star = 0
         new_pity_4_star += 1
         wish_animation = "pygame/videos/pull_5_star.mp4"
-    
     elif wish_rarete == "4_star":
         wish_animation = "pygame/videos/pull_4_star.mp4"
         new_pity_4_star = 0
@@ -237,22 +234,20 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
         wish_animation = "pygame/videos/pull_3_star.mp4"
         new_pity_5_star += 1
         new_pity_4_star += 1
-        
+    # --- 5050 ---
     if wish_rarete == "5_star":
         if not guaranteed_5_star and random.random() < 0.5:
             new_guaranteed_5_star = True
             wish_rarete = "5_star_perma"
         else:
             new_guaranteed_5_star = False
-    
+
     if wish_rarete == "4_star":
         featured_4_stars = characters["5_star"][current_banner_index].get("featured_4_star", [])
         if featured_4_stars and random.random() < 0.8:  
-            # Featured 4★
             featured_chars = [c for c in characters["4_star"] if c["name"] in featured_4_stars]
             wish_result_character = random.choice(featured_chars)
         else:
-            # Non-featured 4★
             non_featured_chars = [c for c in characters["4_star"] if c["name"] not in featured_4_stars]
             wish_result_character = random.choice(non_featured_chars) if non_featured_chars else random.choice(characters["4_star"])
     elif wish_rarete == "5_star":
@@ -261,9 +256,7 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
         wish_result_character = random.choice(characters[wish_rarete])
     
     wish_splash_art = scale_to_height(
-        pygame.image.load(wish_result_character["image"]).convert_alpha(), 
-        HEIGHT
-    )
+        pygame.image.load(wish_result_character["image"]).convert_alpha(), HEIGHT)
     
     return {
         "rarete": wish_rarete,
@@ -277,7 +270,7 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
 
 def play_video(video_path, screen, loop=False):
     """
-    Lit et affiche vidéo sur écran pygame
+    Lit et affiche vidéo sur écran, compliqué et troové sur internet --> NE PAS TOUCHER
     """
     cap = cv2.VideoCapture(video_path)
     
@@ -351,7 +344,12 @@ def draw_button(screen, rect, text, mouse_pos):
     text_rect = button_text.get_rect(center=rect.center)
     screen.blit(button_text, text_rect)
 
-def weapon_background(weapon):
+def weapon_background_path(weapon):
+    """
+    Donne le chemin de l'image de fond selon le type d'arme.
+    Args:
+        weapon (str): type d'arme ("sword", "claymore", "polearm", "bow", "catalyst")
+    """
     return pygame.image.load(f"pygame/img/Weapon_Background/{weapon}.png").convert_alpha()
 
 def afficher_resultats(results, screen): 
@@ -383,7 +381,7 @@ def afficher_resultats(results, screen):
         current_result = results[current_index]
 
         if current_result["character"]["type"] is not None:
-            weapon_BG = scale_to_height(weapon_background(current_result["character"]["type"]),HEIGHT//2.5)
+            weapon_BG = scale_to_height(weapon_background_path(current_result["character"]["type"]),HEIGHT//2.5)
             screen.blit(weapon_BG, (WIDTH//2 - weapon_BG.get_width()//2, HEIGHT//2 - weapon_BG.get_height()//2))
             
         afficher_splash_art(screen, current_result["splash_art"], animation_progress)
@@ -441,10 +439,9 @@ border_radius = int(HEIGHT * 10 / 900)
 
 while running:
     mouse_pos = pygame.mouse.get_pos()
-    
+    # --- Affichage background et banniere---
     screen.fill((0, 0, 0))
     screen.blit(background, (WIDTH//2 - background.get_width()//2, HEIGHT//2 - background.get_height()//2))
-    
     if wish_splash_art is None:
         border_rect = pygame.Rect(
             banner_border_w - border_thickness,
@@ -474,7 +471,7 @@ while running:
     screen.blit(pity_text, (pity_x, pity_y))
     screen.blit(pity_text_2, (pity_x, pity_y2))
     screen.blit(pity_text_3, (pity_x, pity_y3))
-    
+    # --- Gestion events ---
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
