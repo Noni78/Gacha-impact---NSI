@@ -4,7 +4,7 @@ import random
 import cv2
 
 pygame.init()
-HEIGHT = 600
+HEIGHT = 660
 WIDTH = int(HEIGHT*16/9)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -28,9 +28,8 @@ def scale_with_borders(image, target_width, target_height, border_percent=15):
     new_height = target_height - (2 * border_h)
     return pygame.transform.scale(image, (new_width, new_height)), border_w, border_h
 
-# --- Charger background ---
 background = scale_to_height(pygame.image.load("pygame/img/background.png").convert_alpha(), HEIGHT)
-
+background_wishing = scale_to_height(pygame.image.load("pygame/img/background_wishing.png").convert_alpha(), HEIGHT)
 # --- Paramètres Gacha ---
 pity_5_star = 80
 pity_4_star = 1
@@ -39,7 +38,7 @@ hard_pity = 90
 guaranteed_5_star = False
 wish_rarete = None
 wish_splash_art = None
-
+animation_progress = 0.0 
 characters = {
     "5_star": [
         {
@@ -102,7 +101,6 @@ button_height = int(HEIGHT * 60 / 900)
 button_width = int(HEIGHT * 200 / 900)
 button_spacing = int(HEIGHT * 20 / 900)
 button_bottom_margin = int(HEIGHT * 80 / 900)
-
 button_x1_rect = pygame.Rect(WIDTH//2 - button_width - button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
 button_x10_rect = pygame.Rect(WIDTH//2 + button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
 button_color = (255, 255, 230)
@@ -130,6 +128,30 @@ def draw_left_buttons(screen, mouse_pos):
         text_surf = button_font.render(name, True, (78, 80, 40))
         text_rect = text_surf.get_rect(center=rect.center)
         screen.blit(text_surf, text_rect)
+
+def afficher_splash_art(screen, splash_art, progress=1.0):
+    """
+    Affiche le splash art avec effet de zoom/déformation comme Genshin Impact
+    
+    Args:
+        screen: surface pygame
+        splash_art: image du personnage
+        progress (float): progression de l'animation de 0.0 à 1.0
+    """
+    scale_factor = 1.4 - (0.4 * min(progress, 1.0))
+    
+    new_width = int(splash_art.get_width() * scale_factor)
+    new_height = int(splash_art.get_height() * scale_factor)
+    
+    scaled_splash = pygame.transform.scale(splash_art, (new_width, new_height))
+    
+    x = WIDTH // 2 - scaled_splash.get_width() // 2
+    y = HEIGHT // 2 - scaled_splash.get_height() // 2
+    
+    alpha = int(255 * min(progress, 1.0))
+    scaled_splash.set_alpha(alpha)
+
+    screen.blit(scaled_splash, (x, y))
 
 def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90):
     """
@@ -170,7 +192,7 @@ def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90):
 
     return tirage
 
-def faire_un_voeu(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90, current_banner_index=0):
+def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90, current_banner_index=0):
     """
     Effectue un vœu et retourne tous les résultats.
     
@@ -252,7 +274,7 @@ def faire_un_voeu(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, har
 
 def play_video(video_path, screen, loop=False):
     """
-    Lit et affiche une vidéo sur l'écran pygame
+    Lit et affiche vidéo sur écran pygame
     """
     cap = cv2.VideoCapture(video_path)
     
@@ -310,7 +332,7 @@ def play_video(video_path, screen, loop=False):
     return True
 
 def draw_button(screen, rect, text, mouse_pos):
-    """Dessine un bouton avec effet de survol"""
+    """Dessine bouton"""
     if rect.collidepoint(mouse_pos):
         color = button_hover_color
     else:
@@ -340,6 +362,7 @@ def afficher_resultats(results, screen):
     current_index = 0
     showing_results = True
     clock = pygame.time.Clock()
+    animation_progress = 0.0  
     
     counter_y = int(HEIGHT * 50 / 900)
     name_y = int(HEIGHT * 100 / 900)
@@ -349,12 +372,16 @@ def afficher_resultats(results, screen):
         mouse_pos = pygame.mouse.get_pos()
         
         screen.fill((255, 255, 255))
-        screen.blit(background, (WIDTH//2 - background.get_width()//2, HEIGHT//2 - background.get_height()//2))
+        screen.blit(background_wishing, (WIDTH//2 - background_wishing.get_width()//2, HEIGHT//2 - background_wishing.get_height()//2))
         
         current_result = results[current_index]
-        screen.blit(current_result["splash_art"], 
-                    (WIDTH//2 - current_result["splash_art"].get_width()//2, 
-                    HEIGHT//2 - current_result["splash_art"].get_height()//2))
+        
+        # Afficher avec animation
+        afficher_splash_art(screen, current_result["splash_art"], animation_progress)
+        
+        # Incrémenter l'animation
+        if animation_progress < 1.0:
+            animation_progress += 0.08  # Vitesse d'animation
         
         counter_text = font.render(f"{current_index + 1}/{len(results)}", True, (255, 255, 255))
         screen.blit(counter_text, (WIDTH//2 - counter_text.get_width()//2, counter_y))
@@ -373,15 +400,18 @@ def afficher_resultats(results, screen):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE or event.key == pygame.K_RIGHT:
                     current_index += 1
+                    animation_progress = 0.0  # Reset animation
                     if current_index >= len(results):
                         return True, True  # Retour à la bannière
                 elif event.key == pygame.K_LEFT and current_index > 0:
                     current_index -= 1
+                    animation_progress = 0.0  # Reset animation
                 elif event.key == pygame.K_ESCAPE:
                     return True, True  # Retour à la bannière
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:  # Clic gauche
                     current_index += 1
+                    animation_progress = 0.0  # Reset animation
                     if current_index >= len(results):
                         return True, True  # Retour à la bannière
         
@@ -390,14 +420,14 @@ def afficher_resultats(results, screen):
     
     return True, True
 
-
 # --- Boucle principale ---
 running = True
 clock = pygame.time.Clock()
 delta_time = 0.1
 title_y = int(HEIGHT * 20 / 900)
-pity_y = int(HEIGHT * 20 / 900)
-pity_y2 = int(HEIGHT * 60 / 900)
+pity_y = int(HEIGHT * 10 / 900)
+pity_y2 = int(HEIGHT * 50 / 900)
+pity_y3 = int(HEIGHT * 90 / 900)
 pity_x = int(HEIGHT * 20 / 900)
 border_thickness = int(HEIGHT * 5 / 900)
 border_radius = int(HEIGHT * 10 / 900)
@@ -418,7 +448,11 @@ while running:
         pygame.draw.rect(screen, (178, 180, 166), border_rect, border_thickness, border_radius=border_radius)
         screen.blit(banniere, (banner_border_w, banner_border_h))
     else:
-        screen.blit(wish_splash_art, (WIDTH//2 - wish_splash_art.get_width()//2, HEIGHT//2 - wish_splash_art.get_height()//2))
+        screen.blit(background_wishing, (WIDTH//2 - background_wishing.get_width()//2, HEIGHT//2 - background_wishing.get_height()//2))
+        afficher_splash_art(screen, wish_splash_art, animation_progress)
+        
+        if animation_progress < 1.0:
+            animation_progress += 0.08
     
     # --- Boutons ---
     draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos)
@@ -429,8 +463,10 @@ while running:
     pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
     odd_5_star =(pity_5_star - soft_pity) * ((1 - 0.006) / (hard_pity - soft_pity)) + 0.006 if pity_5_star > soft_pity else 0.006
     pity_text_2 = button_font.render(f"Chance 5★: {min(odd_5_star*100, 100):.2f}%", True, (255, 215, 0))
-    screen.blit(pity_text_2, (pity_x, pity_y2))
+    pity_text_3 = button_font.render(f"5★ limité garanti: {guaranteed_5_star}", True, (255, 215, 0))
     screen.blit(pity_text, (pity_x, pity_y))
+    screen.blit(pity_text_2, (pity_x, pity_y2))
+    screen.blit(pity_text_3, (pity_x, pity_y3))
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -438,9 +474,10 @@ while running:
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if button_x1_rect.collidepoint(event.pos):
-                result = faire_un_voeu(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity, hard_pity, current_banner_index)
+                result = wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity, hard_pity, current_banner_index)
                 wish_rarete = result["rarete"]
                 wish_splash_art = result["splash_art"]
+                animation_progress = 0.0  # Reset animation
                 pity_5_star = result["new_pity_5_star"]
                 pity_4_star = result["new_pity_4_star"]
                 guaranteed_5_star = result["new_guaranteed_5_star"]
@@ -450,7 +487,7 @@ while running:
             elif button_x10_rect.collidepoint(event.pos):
                 results = []
                 for _ in range(10):
-                    result = faire_un_voeu(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity, hard_pity, current_banner_index)
+                    result = wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity, hard_pity, current_banner_index)
                     results.append(result)
                     pity_5_star = result["new_pity_5_star"]
                     pity_4_star = result["new_pity_4_star"]
@@ -466,10 +503,12 @@ while running:
                 if reset_to_banniere:
                     wish_rarete = None
                     wish_splash_art = None
+                    animation_progress = 0.0
 
             elif wish_splash_art is not None:
                 wish_rarete = None
                 wish_splash_art = None
+                animation_progress = 0.0
             else:
                 for i, (rect, name) in enumerate(left_buttons):
                     if rect.collidepoint(event.pos):
@@ -477,6 +516,7 @@ while running:
                         banniere_path = characters["5_star"][current_banner_index]["banniere"]
                         banniere = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)[0]
                         wish_splash_art = None
+                        animation_progress = 0.0
     
     pygame.display.flip()
     delta_time = clock.tick(60)/1000
