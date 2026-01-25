@@ -354,23 +354,25 @@ def weapon_background_path(weapon):
 
 def ecran_multi(results, screen):
     """
-    Affiche l'écran récapitulatif après une multi
+    Écran multi avec panels arrondis
     """
 
     clock = pygame.time.Clock()
     running = True
 
     images = []
+    raretes = []
 
     # Charger images
     for res in results:
 
         name = res["character"]["name"].replace(" ", "_")
+        rarete = res["rarete"]
 
-        if res["rarete"] in ["5_star", "5_star_perma"]:
+        if rarete in ["5_star", "5_star_perma"]:
             path = f"pygame/img/5_star/multi/{name}.png"
 
-        elif res["rarete"] == "4_star":
+        elif rarete == "4_star":
             path = f"pygame/img/4_star/multi/{name}.png"
 
         else:
@@ -382,7 +384,9 @@ def ecran_multi(results, screen):
         except:
             images.append(None)
 
-    # Largeur cible = écran / 10
+        raretes.append(rarete)
+
+    # Largeur par case
     cell_width = WIDTH // 10
 
     scaled_images = []
@@ -398,12 +402,27 @@ def ecran_multi(results, screen):
         new_w = cell_width
         new_h = int(img.get_height() * scale)
 
-        img = pygame.transform.scale(
-            img,
-            (new_w, new_h)
-        )
+        img = pygame.transform.scale(img, (new_w, new_h))
 
         scaled_images.append(img)
+
+    # Couleurs rareté
+    def get_color(r):
+
+        if r in ["5_star", "5_star_perma"]:
+            return (255, 200, 60)
+
+        if r == "4_star":
+            return (190, 130, 255)
+
+        return (120, 170, 255)
+
+    def darken(c, k=0.75):
+        return tuple(int(x * k) for x in c)
+
+    # Style
+    radius = 18
+    border = 2
 
     while running:
 
@@ -415,18 +434,49 @@ def ecran_multi(results, screen):
             HEIGHT//2 - background_wishing.get_height()//2)
         )
 
-        # Centrage vertical
         max_h = max(img.get_height() for img in scaled_images if img)
 
         y = HEIGHT//2 - max_h//2
-
         x = 0
 
-        # Affichage collé
-        for img in scaled_images:
+        for i, img in enumerate(scaled_images):
 
+            color = get_color(raretes[i])
+            border_color = darken(color)
+
+            # Surface du panel
+            panel = pygame.Surface(
+                (cell_width, max_h),
+                pygame.SRCALPHA
+            )
+
+            # Fond arrondi
+            pygame.draw.rect(
+                panel,
+                color,
+                panel.get_rect(),
+                border_radius=radius
+            )
+
+            # Bordure arrondie
+            pygame.draw.rect(
+                panel,
+                border_color,
+                panel.get_rect(),
+                border,
+                border_radius=radius
+            )
+
+            # Image
             if img:
-                screen.blit(img, (x, y))
+
+                img_x = (cell_width - img.get_width()) // 2
+                img_y = max_h - img.get_height()
+
+                panel.blit(img, (img_x, img_y))
+
+            # Affichage
+            screen.blit(panel, (x, y))
 
             x += cell_width
 
@@ -441,7 +491,7 @@ def ecran_multi(results, screen):
         screen.blit(
             text,
             (WIDTH//2 - text.get_width()//2,
-            HEIGHT - 50)
+            HEIGHT - 45)
         )
 
         for event in pygame.event.get():
@@ -461,6 +511,7 @@ def ecran_multi(results, screen):
         clock.tick(60)
 
     return True
+
 
 def afficher_resultats(results, screen): 
     """
@@ -490,7 +541,6 @@ def afficher_resultats(results, screen):
 
         current_result = results[current_index]
 
-        # Background arme
         if current_result["character"]["type"] is not None:
 
             weapon_BG = scale_to_height(
@@ -563,7 +613,6 @@ def afficher_resultats(results, screen):
                     current_index += 1
                     animation_progress = 0.0 
 
-                    # FIN → écran multi
                     if current_index >= len(results):
 
                         ok = ecran_multi(results, screen)
@@ -581,8 +630,13 @@ def afficher_resultats(results, screen):
 
 
                 elif event.key == pygame.K_ESCAPE:
-                    return True, True  
 
+                    ok = ecran_multi(results, screen)
+
+                    if not ok:
+                        return False, False
+
+                    return True, True
 
             if event.type == pygame.MOUSEBUTTONUP:
 
