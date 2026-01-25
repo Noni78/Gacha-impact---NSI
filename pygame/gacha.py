@@ -65,9 +65,17 @@ characters = {
     "5_star": [
         {"name": "Columbina", "image": "pygame/img/5_star/Columbina.png"},
         {"name": "Zhongli", "image": "pygame/img/5_star/Zhongli.png"},
+        {"name": "Skirk", "image": "pygame/img/5_star/Skirk.png"},
     ],
     "5_star_perma": [
         {"name": "Qiqi", "image": "pygame/img/5_star/Qiqi.png"},
+        {"name": "Dehya", "image": "pygame/img/5_star/Dehya.png"},
+        {"name": "Diluc", "image": "pygame/img/5_star/Diluc.png"},
+        {"name": "Jean", "image": "pygame/img/5_star/Jean.png"},
+        {"name": "Keqing", "image": "pygame/img/5_star/Keqing.png"},
+        {"name": "Mona", "image": "pygame/img/5_star/Mona.png"},
+        {"name": "Tighnari", "image": "pygame/img/5_star/Tighnari.png"},
+        {"name": "Yumemizuki Mizuki", "image": "pygame/img/5_star/Yumemizuki_Mizuki.png"},
     ],
 
     "4_star": [
@@ -75,8 +83,11 @@ characters = {
     ],
 
     "3_star": [
-        {"name": "Thrilling Tale of Dragon Slayer", "image": "pygame/img/3_star/TTDS.png"},
-        {"name": "Ferrous Shadow", "image": "pygame/img/3_star/Ferrous_Shadow.png"},
+        {"name": "Thrilling Tale of Dragon Slayer", "image": "pygame/img/3_star/TTDS.png", "type": "catalyst"},
+        {"name": "Ferrous Shadow", "image": "pygame/img/3_star/Ferrous_Shadow.png","type": "claymore"},
+        {"name": "Slingshot", "image": "pygame/img/3_star/Slingshot.png", "type": "bow"},
+        {"name": "Black Tassel", "image": "pygame/img/3_star/Black_tassel.png", "type": "polearm"},
+        {"name": "Cool Steel", "image": "pygame/img/3_star/Cool_Steel.png", "type": "sword"},  
     ]
 }
 
