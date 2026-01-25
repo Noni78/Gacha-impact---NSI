@@ -4,11 +4,15 @@ import random
 import cv2
 
 pygame.init()
-HEIGHT = 900 
+HEIGHT = 500
 WIDTH = int(HEIGHT*16/9)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-font = pygame.font.Font("pygame/font/genshin.ttf", 40)
-button_font = pygame.font.Font("pygame/font/genshin.ttf", 30)
+
+font_size = int(HEIGHT * 40 / 900)  
+button_font_size = int(HEIGHT * 30 / 900)
+
+font = pygame.font.Font("pygame/font/genshin.ttf", font_size)
+button_font = pygame.font.Font("pygame/font/genshin.ttf", button_font_size)
 
 def scale_to_height(image, target_height):
     """
@@ -37,13 +41,18 @@ background = scale_to_height(pygame.image.load("pygame/img/background.png").conv
 
 banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.load("pygame/img/banniere/skirk.jpg").convert_alpha(), WIDTH, HEIGHT, border_percent=15)
 
-# --- Définir boutons ---
-button_x1_rect = pygame.Rect(WIDTH//2 - 220, HEIGHT - 80, 200, 60)
-button_x10_rect = pygame.Rect(WIDTH//2 + 20, HEIGHT - 80, 200, 60)
+# --- Définir boutons (tailles adaptatives) ---
+button_height = int(HEIGHT * 60 / 900)
+button_width = int(HEIGHT * 200 / 900)
+button_spacing = int(HEIGHT * 20 / 900)
+button_bottom_margin = int(HEIGHT * 80 / 900)
+
+button_x1_rect = pygame.Rect(WIDTH//2 - button_width - button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
+button_x10_rect = pygame.Rect(WIDTH//2 + button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
 button_color = (255, 255, 230)
 button_hover_color = (240, 240, 230)
 
-# -------- Paramètres Gacha ---------  <--- ICI
+# -------- Paramètres Gacha ---------
 pity_5_star = 60
 pity_4_star = 1
 soft_pity = 73
@@ -241,8 +250,11 @@ def draw_button(screen, rect, text, mouse_pos):
     else:
         color = button_color
     
-    pygame.draw.rect(screen, color, rect, border_radius=30)
-    pygame.draw.rect(screen, (180, 178, 178), rect, 3, border_radius=30) 
+    border_radius = int(HEIGHT * 30 / 900)
+    border_width = int(HEIGHT * 3 / 900)
+    
+    pygame.draw.rect(screen, color, rect, border_radius=border_radius)
+    pygame.draw.rect(screen, (180, 178, 178), rect, border_width, border_radius=border_radius) 
     
     button_text = button_font.render(text, True, (183, 167, 155))
     text_rect = button_text.get_rect(center=rect.center)
@@ -263,30 +275,31 @@ def afficher_resultats(results, screen):
     showing_results = True
     clock = pygame.time.Clock()
     
+    counter_y = int(HEIGHT * 50 / 900)
+    name_y = int(HEIGHT * 100 / 900)
+    instruction_y = int(HEIGHT * 50 / 900)
+    
     while showing_results:
         mouse_pos = pygame.mouse.get_pos()
         
-        # Afficher le fond
         screen.fill((255, 255, 255))
         screen.blit(background, (WIDTH//2 - background.get_width()//2, HEIGHT//2 - background.get_height()//2))
         
-        # Afficher le splash art actuel
         current_result = results[current_index]
         screen.blit(current_result["splash_art"], 
                     (WIDTH//2 - current_result["splash_art"].get_width()//2, 
                     HEIGHT//2 - current_result["splash_art"].get_height()//2))
         
-        # Afficher le compteur (ex: 1/10)
         counter_text = font.render(f"{current_index + 1}/{len(results)}", True, (255, 255, 255))
-        screen.blit(counter_text, (WIDTH//2 - counter_text.get_width()//2, 50))
+        screen.blit(counter_text, (WIDTH//2 - counter_text.get_width()//2, counter_y))
         
         # Afficher le nom du personnage
         char_name = button_font.render(current_result["character"]["name"], True, (255, 255, 255))
-        screen.blit(char_name, (WIDTH//2 - char_name.get_width()//2, HEIGHT - 100))
+        screen.blit(char_name, (WIDTH//2 - char_name.get_width()//2, HEIGHT - name_y))
         
         # Instructions
         instruction = button_font.render("Clic ou Espace pour continuer - Echap pour quitter", True, (255, 255, 255))
-        screen.blit(instruction, (WIDTH//2 - instruction.get_width()//2, HEIGHT - 50))
+        screen.blit(instruction, (WIDTH//2 - instruction.get_width()//2, HEIGHT - instruction_y))
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -316,6 +329,14 @@ running = True
 clock = pygame.time.Clock()
 delta_time = 0.1
 
+# Marges adaptatives
+title_y = int(HEIGHT * 20 / 900)
+pity_y = int(HEIGHT * 20 / 900)
+pity_y2 = int(HEIGHT * 60 / 900)
+pity_x = int(HEIGHT * 20 / 900)
+border_thickness = int(HEIGHT * 5 / 900)
+border_radius = int(HEIGHT * 10 / 900)
+
 while running:
     mouse_pos = pygame.mouse.get_pos()
     
@@ -324,28 +345,27 @@ while running:
     screen.blit(background, (WIDTH//2 - background.get_width()//2, HEIGHT//2 - background.get_height()//2))
     
     if wish_splash_art is None:
-        border_thickness = 5
         border_rect = pygame.Rect(
             banner_border_w - border_thickness,
             banner_border_h - border_thickness,
             banniere.get_width() + (border_thickness * 2),
             banniere.get_height() + (border_thickness * 2)
         )
-        pygame.draw.rect(screen, (178, 180, 166), border_rect, border_thickness, border_radius=10)  # Bordure dorée
+        pygame.draw.rect(screen, (178, 180, 166), border_rect, border_thickness, border_radius=border_radius)
         
         screen.blit(banniere, (banner_border_w, banner_border_h))
     else:
         screen.blit(wish_splash_art, (WIDTH//2 - wish_splash_art.get_width()//2, HEIGHT//2 - wish_splash_art.get_height()//2))
         
-    screen.blit(text, (WIDTH//2 - text.get_width()//2, 20))
+    screen.blit(text, (WIDTH//2 - text.get_width()//2, title_y))
     
     draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos)
     draw_button(screen, button_x10_rect, "Voeu x10", mouse_pos)
     pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
     odd_5_star =(pity_5_star - soft_pity) * ((1 - 0.006) / (hard_pity - soft_pity)) + 0.006 if pity_5_star > soft_pity else 0.006
     pity_text_2 = button_font.render(f"Chance 5★: {min(odd_5_star*100, 100):.2f}%", True, (255, 215, 0))
-    screen.blit(pity_text_2, (20, 60))
-    screen.blit(pity_text, (20, 20))
+    screen.blit(pity_text_2, (pity_x, pity_y2))
+    screen.blit(pity_text, (pity_x, pity_y))
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
