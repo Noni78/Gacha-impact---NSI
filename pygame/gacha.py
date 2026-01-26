@@ -169,7 +169,7 @@ def afficher_splash_art(screen, splash_art, progress=1.0):
 
     screen.blit(scaled_splash, (x, y))
 
-def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90):
+def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,w5=0.006,w4=0.08):
     """
     Calcule la rareté d'un tirage sans modifier les compteurs de pity.
     
@@ -182,9 +182,6 @@ def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90):
     Returns:
         str: "5_star", "4_star" ou "3_star" selon le tirage aléatoire pondéré.
     """
-
-    w5 = 0.006
-    w4 = 0.08
 
     if pity_5_star >= hard_pity:
         return "5_star"
