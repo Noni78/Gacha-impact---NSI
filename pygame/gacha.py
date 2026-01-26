@@ -102,7 +102,7 @@ characters = {
 }
 # --- Initalisation ---
 pygame.init()
-HEIGHT = 1000
+HEIGHT = 660 #   <------------------------------------------------------------------------------ ici height
 WIDTH = int(HEIGHT*16/9)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Totally not a Genshin Impact wishing replica")
