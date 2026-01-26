@@ -152,21 +152,19 @@ def afficher_splash_art(screen, splash_art, progress=1.0):
     Args:
         screen: surface pygame
         splash_art: image du personnage
-        progress (float): progression de l'animation de 0.0 à 1.0
+        progress (float): progression de l'animation de 0 à 1
     """
-    scale_factor = 1.4 - (0.4 * min(progress, 1.0))
+    scale_factor = 1.4 - (0.4 * min(progress, 1))
     
     new_width = int(splash_art.get_width() * scale_factor)
     new_height = int(splash_art.get_height() * scale_factor)
-    
     scaled_splash = pygame.transform.scale(splash_art, (new_width, new_height))
     
     x = WIDTH // 2 - scaled_splash.get_width() // 2
     y = HEIGHT // 2 - scaled_splash.get_height() // 2
     
-    alpha = int(255 * min(progress, 1.0))
+    alpha = int(255 * min(progress, 1))
     scaled_splash.set_alpha(alpha)
-
     screen.blit(scaled_splash, (x, y))
 
 def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,w5=0.006,w4=0.08):
@@ -185,21 +183,17 @@ def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,w5=0.006,w4=0.08
 
     if pity_5_star >= hard_pity:
         return "5_star"
-
     if pity_4_star >= 9:
         return "4_star"
-
     if pity_5_star > soft_pity:
         w5 += (pity_5_star - soft_pity) * ((1 - 0.006) / (hard_pity - soft_pity))
 
     w5 = min(w5, 1 - w4)
     w3 = 1 - w4 - w5
-
     tirage = random.choices(
         ["5_star", "4_star", "3_star"],
         [w5, w4, w3]
-    )[0]
-
+        )[0]
     return tirage
 
 def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90, current_banner_index=0):
@@ -207,11 +201,10 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
     Effectue 1 voeuu et retourne tous les résultats.
     
     Args:
-        pity_5_star (int): compteur actuel pity 5★
-        pity_4_star (int): compteur actuel pity 4★
+        pity_5_star,pity_4_star (int): compteur actuel pity 5★ et 4★
         guaranteed_5_star (bool): True si le prochain 5★ est garanti 
-        soft_pity (int, optional): début de la soft pity pour 5★. Défaut 70
-        hard_pity (int, optional): hard pity pour 5★. Défaut 90
+        soft_pity (int, optional): soft pity 5★. Défaut 70
+        hard_pity (int, optional): hard pity 5★. Défaut 90
         current_banner_index (int): index de la bannière actuelle
     
     Returns:
@@ -226,7 +219,6 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
         }
     """
     wish_rarete = rarete(pity_5_star, pity_4_star, soft_pity, hard_pity)
-    
     new_pity_5_star = pity_5_star
     new_pity_4_star = pity_4_star
     new_guaranteed_5_star = guaranteed_5_star
@@ -243,14 +235,13 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
         wish_animation = "pygame/videos/pull_3_star.mp4"
         new_pity_5_star += 1
         new_pity_4_star += 1
-    # --- 5050 ---
+
     if wish_rarete == "5_star":
         if not guaranteed_5_star and random.random() < 0.5:
             new_guaranteed_5_star = True
             wish_rarete = "5_star_perma"
         else:
             new_guaranteed_5_star = False
-
     if wish_rarete == "4_star":
         featured_4_stars = characters["5_star"][current_banner_index].get("featured_4_star", [])
         if featured_4_stars and random.random() < 0.8:  
@@ -264,9 +255,7 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
     else:
         wish_result_character = random.choice(characters[wish_rarete])
     
-    wish_splash_art = scale_to_height(
-        pygame.image.load(wish_result_character["image"]).convert_alpha(), HEIGHT)
-    
+    wish_splash_art = scale_to_height(pygame.image.load(wish_result_character["image"]).convert_alpha(), HEIGHT)
     return {
         "rarete": wish_rarete,
         "character": wish_result_character,
@@ -279,14 +268,13 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
 
 def play_video(video_path, screen, loop=False):
     """
-    Lit et affiche vidéo sur écran, compliqué et troové sur internet --> NE PAS TOUCHER
+    Lit et affiche vidéo sur écran, compliqué et trouvé sur internet --> NE PAS TOUCHER
     """
     cap = cv2.VideoCapture(video_path)
     
     if not cap.isOpened():
         print(f"Erreur: Impossible d'ouvrir la vidéo {video_path}")
-        return True
-    
+        return True 
     fps = cap.get(cv2.CAP_PROP_FPS)
     if fps == 0 or fps > 120: 
         fps = 30
@@ -298,7 +286,6 @@ def play_video(video_path, screen, loop=False):
     clock = pygame.time.Clock()
     playing = True
     frame_count = 0
-    
     while playing:
         ret, frame = cap.read()
         if not ret:
@@ -318,8 +305,7 @@ def play_video(video_path, screen, loop=False):
         frame = pygame.surfarray.make_surface(frame)
         
         screen.fill((0, 0, 0))
-        screen.blit(frame, (0, 0))
-        
+        screen.blit(frame, (0, 0))   
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 playing = False
@@ -331,7 +317,7 @@ def play_video(video_path, screen, loop=False):
         
         pygame.display.flip()
         clock.tick(fps)
-    
+
     cap.release()
     print("Vidéo terminée")
     return True
