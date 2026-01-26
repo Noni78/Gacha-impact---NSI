@@ -4,7 +4,7 @@ import random
 import cv2
 
 # --- Paramètres Voeu ---
-pity_5_star = 0
+pity_5_star = 80
 pity_4_star = 0
 soft_pity = 73
 hard_pity = 90
@@ -42,6 +42,13 @@ characters = {
             "featured_4_star": ["Xiangling", "Yaoyao", "Iansan"],
             "type": None
         },
+        {#Citlali
+            "name": "Citlali", 
+            "image": "pygame/img/5_star/Citlali.png", 
+            "banniere": "pygame/img/banniere/Citlali.jpg",
+            "featured_4_star": ["Diona", "Kachina", "Bennett"],
+            "type": None
+        },
     ],
     "5_star_perma": [
         {"name": "Qiqi", "image": "pygame/img/5_star/Qiqi.png","type": None},
@@ -62,6 +69,7 @@ characters = {
         {"name": "Fischl", "image": "pygame/img/4_star/Fischl.png", "type": None},
         {"name": "Ifa", "image": "pygame/img/4_star/Ifa.png", "type": None},
         {"name": "Iansan", "image": "pygame/img/4_star/Iansan.png", "type": None},
+        {"name": "Kachina", "image": "pygame/img/4_star/Kachina.png", "type": None},
         {"name": "Lan Yan", "image": "pygame/img/4_star/Lan_Yan.png", "type": None},
         {"name": "Rosaria", "image": "pygame/img/4_star/Rosaria.png", "type": None},
         {"name": "Yun Jin", "image": "pygame/img/4_star/Yun_Jin.png", "type": None},
@@ -148,7 +156,7 @@ def afficher_splash_art(screen, splash_art, progress=1.0):
         splash_art: image du personnage
         progress (float): progression de l'animation de 0 à 1
     """
-    scale_factor = 1.4 - (0.4 * min(progress, 1))
+    scale_factor = 1.8 - (0.5 * min(progress, 1))
     
     new_width = int(splash_art.get_width() * scale_factor)
     new_height = int(splash_art.get_height() * scale_factor)
