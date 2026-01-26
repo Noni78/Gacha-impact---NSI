@@ -104,14 +104,10 @@ def scale_with_borders(image, target_width, target_height, border_percent=15):
 
 background = scale_to_height(pygame.image.load("pygame/img/background.png").convert_alpha(), HEIGHT)
 background_wishing = scale_to_height(pygame.image.load("pygame/img/background_wishing.png").convert_alpha(), HEIGHT)
-
-
-
 # --- Initialisation bannière ---
 current_banner_index = 0  
 banniere_path = characters["5_star"][current_banner_index]["banniere"]
 banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)
-
 # --- Boutons Voeux ---
 button_height = int(HEIGHT * 60 / 900)
 button_width = int(HEIGHT * 200 / 900)
@@ -121,7 +117,6 @@ button_x1_rect = pygame.Rect(WIDTH//2 - button_width - button_spacing//2, HEIGHT
 button_x10_rect = pygame.Rect(WIDTH//2 + button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
 button_color = (255, 255, 230)
 button_hover_color = (240, 240, 230)
-
 # --- Boutons gauche pour choix bannière ---
 left_button_width = int(HEIGHT * 200 / 900)
 left_button_height = int(HEIGHT * 50 / 900)
@@ -135,7 +130,6 @@ for i, char in enumerate(characters["5_star"]):
         left_button_height
     )
     left_buttons.append((rect, char["name"]))
-
 # --- Fonctions ---
 def draw_left_buttons(screen, mouse_pos):
     for rect, name in left_buttons:
@@ -347,8 +341,14 @@ def weapon_background_path(weapon):
     """
     return pygame.image.load(f"pygame/img/Weapon_Background/{weapon}.png").convert_alpha()
 
-def darken(c, coefficient=0.5):
-        return tuple(int(i * coefficient) for i in c)
+def darken(rgb, coefficient=0.5):
+        """
+        Assombrit une couleur
+
+        Args:
+            rgb (tuple): couleur à assombrir
+        """
+        return tuple(int(i * coefficient) for i in rgb)
 
 def get_color(rare:str):
 
@@ -356,7 +356,7 @@ def get_color(rare:str):
             return (220, 190, 20)
 
         if rare == "4_star":
-            return (140, 80, 205)
+            return (120, 60, 185)
 
         return (80, 140, 225)
 
@@ -457,7 +457,7 @@ def ecran_multi(results, screen, radius=60,border=5,ecart=5):
             x += cell_width + ecart
 
         text = button_font.render(
-            "Clic / Espace pour continuer",
+            "Clic / Espace ==> continuer",
             True,
             (255, 255, 255)
         )
@@ -490,44 +490,37 @@ def afficher_resultats(results, screen):
     """
     Affiche les résultats un par un puis écran multi final
     """
-
     current_index = 0
     showing_results = True
     clock = pygame.time.Clock()
     animation_progress = 0.0  
-
     counter_y = int(HEIGHT * 50 / 900)
     name_y = int(HEIGHT * 100 / 900)
     instruction_y = int(HEIGHT * 50 / 900)
 
     while showing_results:
 
-        mouse_pos = pygame.mouse.get_pos()
         screen.fill((255, 255, 255))
-
         screen.blit(
             background_wishing,
             (WIDTH//2 - background_wishing.get_width()//2,
             HEIGHT//2 - background_wishing.get_height()//2)
         )
-
         current_result = results[current_index]
 
         if current_result["character"]["type"] is not None:
-
             weapon_BG = scale_to_height(
                 weapon_background_path(
                     current_result["character"]["type"]
                 ),
                 HEIGHT//2.5
             )
-
             screen.blit(
                 weapon_BG,
                 (WIDTH//2 - weapon_BG.get_width()//2,
                 HEIGHT//2 - weapon_BG.get_height()//2)
             )
-
+        
         afficher_splash_art(
             screen,
             current_result["splash_art"],
@@ -624,7 +617,6 @@ pity_y3 = int(HEIGHT * 90 / 900)
 pity_x = int(HEIGHT * 20 / 900)
 border_thickness = int(HEIGHT * 5 / 900)
 border_radius = int(HEIGHT * 10 / 900)
-
 while running:
     mouse_pos = pygame.mouse.get_pos()
     # --- Affichage background et banniere---
@@ -659,7 +651,7 @@ while running:
     screen.blit(pity_text, (pity_x, pity_y))
     screen.blit(pity_text_2, (pity_x, pity_y2))
     screen.blit(pity_text_3, (pity_x, pity_y3))
-    # --- Gestion events ---
+    # --- Gestion events (boutons et souris) ---
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -709,7 +701,7 @@ while running:
                         banniere = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)[0]
                         wish_splash_art = None
                         animation_progress = 0.0
-    
+    # --- Mettre à jour écran + gerer framerate constant ---
     pygame.display.flip()
     delta_time = clock.tick(60)/1000
     delta_time = min(delta_time, 0.05)
