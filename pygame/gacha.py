@@ -4,7 +4,7 @@ import random
 import cv2
 
 # --- Paramètres Voeu ---
-pity_5_star = 80
+pity_5_star = 0
 pity_4_star = 0
 soft_pity = 73
 hard_pity = 90
