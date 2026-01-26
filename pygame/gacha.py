@@ -14,28 +14,28 @@ wish_splash_art = None
 animation_progress = 0.0 
 characters = {
     "5_star": [
-        {
+        {#Columbina
             "name": "Columbina", 
             "image": "pygame/img/5_star/Columbina.png", 
             "banniere": "pygame/img/banniere/Columbina.jpg",
             "featured_4_star": ["Ifa", "Sethos", "Fischl"],
             "type": None
         },
-        {
+        {#Zhongli
             "name": "Zhongli", 
             "image": "pygame/img/5_star/Zhongli.png", 
             "banniere": "pygame/img/banniere/Zhongli.jpg",
             "featured_4_star": ["Rosaria", "Lan Yan", "Yun Jin"],
             "type": None
         },
-        {
+        {#Skirk
             "name": "Skirk", 
             "image": "pygame/img/5_star/Skirk.png", 
             "banniere": "pygame/img/banniere/Skirk.jpg",
             "featured_4_star": ["Diona", "Candace", "Dahlia"],
             "type": None
         },
-        {
+        {#Mavuika
             "name": "Mavuika", 
             "image": "pygame/img/5_star/Mavuika.png", 
             "banniere": "pygame/img/banniere/Mavuika.jpg",
