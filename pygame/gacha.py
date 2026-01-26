@@ -9,44 +9,49 @@ pity_4_star = 0
 soft_pity = 73
 hard_pity = 90
 guaranteed_5_star = False
-wish_rarete = None
-wish_splash_art = None
-animation_progress = 0.0 
+multi = 10  #Petit conseil ne pas mettre au dessus de 100, et pas en dessous de 5 sinon c'est pas beau
 characters = {
     "5_star": [
         {#Columbina
             "name": "Columbina", 
             "image": "pygame/img/5_star/Columbina.png", 
-            "banniere": "pygame/img/banniere/Columbina.jpg",
+            "banniere": "pygame/img/banniere/Columbina.png",
             "featured_4_star": ["Ifa", "Sethos", "Fischl"],
             "type": None
         },
         {#Zhongli
             "name": "Zhongli", 
             "image": "pygame/img/5_star/Zhongli.png", 
-            "banniere": "pygame/img/banniere/Zhongli.jpg",
+            "banniere": "pygame/img/banniere/Zhongli.png",
             "featured_4_star": ["Rosaria", "Lan Yan", "Yun Jin"],
             "type": None
         },
         {#Skirk
             "name": "Skirk", 
             "image": "pygame/img/5_star/Skirk.png", 
-            "banniere": "pygame/img/banniere/Skirk.jpg",
+            "banniere": "pygame/img/banniere/Skirk.png",
             "featured_4_star": ["Diona", "Candace", "Dahlia"],
             "type": None
         },
         {#Mavuika
             "name": "Mavuika", 
             "image": "pygame/img/5_star/Mavuika.png", 
-            "banniere": "pygame/img/banniere/Mavuika.jpg",
+            "banniere": "pygame/img/banniere/Mavuika.png",
             "featured_4_star": ["Xiangling", "Yaoyao", "Iansan"],
             "type": None
         },
         {#Citlali
             "name": "Citlali", 
             "image": "pygame/img/5_star/Citlali.png", 
-            "banniere": "pygame/img/banniere/Citlali.jpg",
+            "banniere": "pygame/img/banniere/Citlali.png",
             "featured_4_star": ["Diona", "Kachina", "Bennett"],
+            "type": None
+        },
+        {#Xilonen
+            "name": "Xilonen", 
+            "image": "pygame/img/5_star/Xilonen.png", 
+            "banniere": "pygame/img/banniere/Xilonen.png",
+            "featured_4_star": ["Faruzan", "Beidou", "Yanfei"],
             "type": None
         },
     ],
@@ -61,11 +66,13 @@ characters = {
         {"name": "Yumemizuki Mizuki", "image": "pygame/img/5_star/Yumemizuki_Mizuki.png", "type": None},
     ],
     "4_star": [
+        {"name": "Beidou", "image": "pygame/img/4_star/Beidou.png", "type": None},
         {"name": "Bennett", "image": "pygame/img/4_star/Bennett.png", "type": None},
         {"name": "Sethos", "image": "pygame/img/4_star/Sethos.png", "type": None},
         {"name": "Candace", "image": "pygame/img/4_star/Candace.png", "type": None},
         {"name": "Dahlia", "image": "pygame/img/4_star/Dahlia.png", "type": None},
         {"name": "Diona", "image": "pygame/img/4_star/Diona.png", "type": None},
+        {"name": "Faruzan", "image": "pygame/img/4_star/Faruzan.png", "type": None},
         {"name": "Fischl", "image": "pygame/img/4_star/Fischl.png", "type": None},
         {"name": "Ifa", "image": "pygame/img/4_star/Ifa.png", "type": None},
         {"name": "Iansan", "image": "pygame/img/4_star/Iansan.png", "type": None},
@@ -74,19 +81,28 @@ characters = {
         {"name": "Rosaria", "image": "pygame/img/4_star/Rosaria.png", "type": None},
         {"name": "Yun Jin", "image": "pygame/img/4_star/Yun_Jin.png", "type": None},
         {"name": "Yaoyao", "image": "pygame/img/4_star/Yaoyao.png", "type": None},
+        {"name": "Yanfei", "image": "pygame/img/4_star/Yanfei.png", "type": None},
         {"name": "Xiangling", "image": "pygame/img/4_star/Xiangling.png", "type": None},
     ],
     "3_star": [
         {"name": "Thrilling Tale of Dragon Slayer", "image": "pygame/img/3_star/Thrilling_Tale_of_Dragon_Slayer.png", "type": "catalyst"},
+        {"name": "Emerald Orb", "image": "pygame/img/3_star/Emerald_Orb.png", "type": "catalyst"},
+        {"name": "Guide de magie", "image": "pygame/img/3_star/Magic_Guide.png", "type": "catalyst"},
         {"name": "Ferrous Shadow", "image": "pygame/img/3_star/Ferrous_Shadow.png","type": "claymore"},
+        {"name": "Debate Club", "image": "pygame/img/3_star/Debate_Club.png","type": "claymore"},
+        {"name": "Bloodtainted Greatsword", "image": "pygame/img/3_star/Bloodtainted_Greatsword.png","type": "claymore"},
         {"name": "Slingshot", "image": "pygame/img/3_star/Slingshot.png", "type": "bow"},
+        {"name": "Arc du corbeau", "image": "pygame/img/3_star/Raven_Bow.png", "type": "bow"},
+        {"name": "Sharpshooter's Oath", "image": "pygame/img/3_star/Sharpshooter's_Oath.png", "type": "bow"},
         {"name": "Black Tassel", "image": "pygame/img/3_star/Black_tassel.png", "type": "polearm"},
-        {"name": "Cool Steel", "image": "pygame/img/3_star/Cool_Steel.png", "type": "sword"},  
+        {"name": "Lame froide", "image": "pygame/img/3_star/Cool_Steel.png", "type": "sword"},  
+        {"name": "Messager de l'Aube", "image": "pygame/img/3_star/Harbinger_of_Dawn.png", "type": "sword"}, 
+        {"name": "Syrider Sword", "image": "pygame/img/3_star/Skyrider_Sword.png", "type": "sword"}, 
     ]
 }
 # --- Initalisation ---
 pygame.init()
-HEIGHT = 660
+HEIGHT = 1000
 WIDTH = int(HEIGHT*16/9)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Totally not a Genshin Impact wishing replica")
@@ -95,6 +111,17 @@ font_size = int(HEIGHT * 40 / 900)
 font = pygame.font.Font("pygame/font/genshin.ttf", font_size)
 button_font_size = int(HEIGHT * 30 / 900)
 button_font = pygame.font.Font("pygame/font/genshin.ttf", button_font_size)
+try:
+    cursor_img = pygame.image.load("pygame/img/cursor.png").convert_alpha()
+    cursor_size = int(HEIGHT * 32 / 900)
+    cursor_img = pygame.transform.scale(cursor_img, (cursor_size, cursor_size))
+    pygame.mouse.set_visible(False)
+    use_custom_cursor = True
+except:
+    use_custom_cursor = False
+wish_rarete = None
+wish_splash_art = None
+animation_progress = 0.0 
 
 def scale_to_height(image, target_height):
     w, h = image.get_size()
@@ -122,7 +149,7 @@ button_width = int(HEIGHT * 200 / 900)
 button_spacing = int(HEIGHT * 20 / 900)
 button_bottom_margin = int(HEIGHT * 80 / 900)
 button_x1_rect = pygame.Rect(WIDTH//2 - button_width - button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
-button_x10_rect = pygame.Rect(WIDTH//2 + button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
+button_multi_rect = pygame.Rect(WIDTH//2 + button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
 button_color = (255, 255, 230)
 button_hover_color = (240, 240, 230)
 # --- Boutons gauche pour choix bannière ---
@@ -200,7 +227,7 @@ def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,w5=0.006,w4=0.08
 
 def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90, current_banner_index=0):
     """
-    Effectue 1 voeuu et retourne tous les résultats.
+    Effectue 1 voeu et retourne tous les résultats.
     
     Args:
         pity_5_star,pity_4_star (int): compteur actuel pity 5★ et 4★
@@ -368,26 +395,39 @@ def get_color(rare:str):
 
         return (80, 140, 225)
 
-def ecran_multi(results, screen, radius=60,border=5,ecart=5):
+def ecran_multi(results, screen, border=5, ecart=int(5*10/multi)):
     """
-    Écran résumé de la multi
+    Écran résumé de la multi avec masque personnalisé
     """
-
     clock = pygame.time.Clock()
     running = True
     rarete_priority = {"5_star": 1, "5_star_perma": 2, "4_star": 3, "3_star": 4}
     results = sorted(results, key=lambda x: rarete_priority[x["rarete"]])
+    
+    try:
+        mask_template = pygame.image.load("pygame/img/Mask.png").convert_alpha()
+    except:
+        print("Erreur: Impossible de charger pygame/img/Mask.png")
+        mask_template = None
+    try:
+        background_multi = pygame.image.load("pygame/img/background_multi.png").convert_alpha()
+        background_multi.set_alpha(170)
+    except:
+        background_multi = None
+    
     images = []
     raretes = []
     for res in results:
         name = res["character"]["name"].replace(" ", "_")
+        path_weapon = res["character"]["image"]
         rarete = res["rarete"]
         if rarete in ["5_star", "5_star_perma"]:
             path = f"pygame/img/5_star/multi/{name}.png"
         elif rarete == "4_star":
             path = f"pygame/img/4_star/multi/{name}.png"
         else:
-            path = f"pygame/img/3_star/{name}.png"
+            path = path_weapon
+            print(res["character"]["image"])
         try:
             img = pygame.image.load(path).convert_alpha()
             images.append(img)
@@ -395,7 +435,7 @@ def ecran_multi(results, screen, radius=60,border=5,ecart=5):
             images.append(None)
         raretes.append(rarete)
     
-    cell_width = WIDTH // 11
+    cell_width = WIDTH // (multi + 1)
     scaled_images = []
     for img in images:
         if img is None:
@@ -416,79 +456,84 @@ def ecran_multi(results, screen, radius=60,border=5,ecart=5):
         )
         max_h = max(img.get_height() for img in scaled_images if img)
         y = HEIGHT//2 - max_h//2
-        x = (WIDTH - (cell_width * len(scaled_images) + 5 * (len(scaled_images) -1))) // 2
+        x = (WIDTH - (cell_width * len(scaled_images) + ecart * (len(scaled_images) - 1))) // 2
 
         for i, img in enumerate(scaled_images):
             color = get_color(raretes[i])
             border_color = darken(color)
-            panel = pygame.Surface(
-                (cell_width, max_h),
-                pygame.SRCALPHA
-            )
-            pygame.draw.rect(
-                panel,
-                color,
-                panel.get_rect(),
-                border_radius=radius
-            )
+            
+            panel = pygame.Surface((cell_width, max_h), pygame.SRCALPHA)
+            
+            if mask_template is not None:
+                mask_scaled = pygame.transform.scale(mask_template, (cell_width, max_h))
+                
+                border_surface = pygame.Surface((cell_width, max_h), pygame.SRCALPHA)
+                border_surface.fill(border_color)
+                border_surface.blit(mask_scaled, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+                panel.blit(border_surface, (0, 0))
+                
+                inner_width = cell_width - border * 2
+                inner_height = max_h - border * 2
+                if inner_width > 0 and inner_height > 0:
+                    mask_inner = pygame.transform.scale(mask_template, (inner_width, inner_height))
+                    
+                    inner_surface = pygame.Surface((inner_width, inner_height), pygame.SRCALPHA)
+                    inner_surface.fill(color)
+                    inner_surface.blit(mask_inner, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+                    panel.blit(inner_surface, (border, border))
+                    
+                    if img:
+                        img_surface = pygame.Surface((inner_width, inner_height), pygame.SRCALPHA)
 
-            if img:
-                mask = pygame.Surface(
-                    (cell_width, max_h),
-                    pygame.SRCALPHA
-                )
-                pygame.draw.rect(
-                    mask,
-                    (255, 255, 255, 255),
-                    mask.get_rect(),
-                    border_radius=radius
-                )
-                img_surface = pygame.Surface(
-                    (cell_width, max_h),
-                    pygame.SRCALPHA
-                )
-                img_x = (cell_width - img.get_width()) // 2
-                img_y = max_h - img.get_height()
-                img_surface.blit(img, (img_x, img_y))
-                img_surface.blit(mask, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
-                panel.blit(img_surface, (0, 0))
+                        # --- Background derrière l'image ---
+                        if background_multi:
+                            bg = pygame.transform.scale(background_multi, (inner_width, inner_height))
+                            img_surface.blit(bg, (0, 0))
 
-            pygame.draw.rect(
-                panel,
-                border_color,
-                panel.get_rect(),
-                border,
-                border_radius=radius
-            )
+                        # --- Image du perso ---
+                        img_x = (inner_width - img.get_width()) // 2
+                        img_y = inner_height - img.get_height()
+                        img_surface.blit(img, (img_x, img_y))
+
+                        # --- Masque ---
+                        img_surface.blit(mask_inner, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+
+                        panel.blit(img_surface, (border, border))
+
+            else:
+                pygame.draw.rect(panel, color, panel.get_rect(), border_radius=140)
+                if img:
+                    mask = pygame.Surface((cell_width, max_h), pygame.SRCALPHA)
+                    pygame.draw.rect(mask, (255, 255, 255, 255), mask.get_rect(), border_radius=140)
+                    img_surface = pygame.Surface((cell_width, max_h), pygame.SRCALPHA)
+                    img_x = (cell_width - img.get_width()) // 2
+                    img_y = max_h - img.get_height()
+                    img_surface.blit(img, (img_x, img_y))
+                    img_surface.blit(mask, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+                    panel.blit(img_surface, (0, 0))
+                pygame.draw.rect(panel, border_color, panel.get_rect(), border, border_radius=140)
+            
             screen.blit(panel, (x, y))
-
             x += cell_width + ecart
 
-        text = button_font.render(
-            "Clic / Espace ==> continuer",
-            True,
-            (255, 255, 255)
-        )
-
-        screen.blit(
-            text,
-            (WIDTH//2 - text.get_width()//2,
-            HEIGHT - 45)
-        )
+        text = button_font.render("Clic / Espace ==> continuer", True, (255, 255, 255))
+        screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT - 45))
 
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 return False
-
             if event.type == pygame.KEYDOWN:
                 if event.key in [pygame.K_SPACE, pygame.K_ESCAPE]:
                     return True
-
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     return True
 
+        if use_custom_cursor:
+            mouse_pos = pygame.mouse.get_pos()
+            cursor_x = mouse_pos[0] - cursor_img.get_width() // 2
+            cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
+            screen.blit(cursor_img, (cursor_x, cursor_y))
         pygame.display.flip()
         clock.tick(60)
 
@@ -648,7 +693,7 @@ while running:
     
     # --- Boutons ---
     draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos)
-    draw_button(screen, button_x10_rect, "Voeu x10", mouse_pos)
+    draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos)
     draw_left_buttons(screen, mouse_pos)
     
     # --- Texte Pity ---
@@ -676,9 +721,9 @@ while running:
                 if not play_video(result["animation"], screen, loop=False):
                     running = False
 
-            elif button_x10_rect.collidepoint(event.pos):
+            elif button_multi_rect.collidepoint(event.pos):
                 results = []
-                for _ in range(10):
+                for _ in range(multi):
                     result = wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity, hard_pity, current_banner_index)
                     results.append(result)
                     pity_5_star = result["new_pity_5_star"]
@@ -709,6 +754,12 @@ while running:
                         banniere = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)[0]
                         wish_splash_art = None
                         animation_progress = 0.0
+
+    if use_custom_cursor:
+        cursor_x = mouse_pos[0] - cursor_img.get_width() // 2
+        cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
+        screen.blit(cursor_img, (cursor_x, cursor_y))
+    
     # --- Mettre à jour écran + gerer framerate constant ---
     pygame.display.flip()
     delta_time = clock.tick(60)/1000
