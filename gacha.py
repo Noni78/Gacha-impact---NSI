@@ -225,7 +225,7 @@ def draw_left_buttons(screen, mouse_pos):
         text_rect = text_surf.get_rect(center=rect.center)
         screen.blit(text_surf, text_rect)
 
-def afficher_splash_art(screen, splash_art, progress=1.0):
+def animer_splash_art(screen, splash_art, progress=1.0):
     """
     'anime' le splash art
     
@@ -622,7 +622,7 @@ def afficher_resultats(results, screen):
                 HEIGHT//2 - weapon_BG.get_height()//2)
             )
         
-        afficher_splash_art(
+        animer_splash_art(
             screen,
             current_result["splash_art"],
             animation_progress
@@ -708,6 +708,32 @@ def afficher_resultats(results, screen):
 
     return True, True
 
+def actualiser_text_pity():
+    pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
+    odd_5_star =(pity_5_star - soft_pity) * ((1 -(proba_effective_5_star)) / (hard_pity - soft_pity)) + (proba_effective_5_star) if pity_5_star > soft_pity else (proba_effective_5_star)
+    pity_text_2 = button_font.render(f"chance 5★: {min(odd_5_star*100, 100):.2f}%", True, (255, 215, 0))
+    pity_text_3 = button_font.render(f"5★ limité garanti: {guaranteed_5_star}", True, (255, 215, 0))
+    screen.blit(pity_text, (pity_x, pity_y))
+    screen.blit(pity_text_2, (pity_x, pity_y2))
+    screen.blit(pity_text_3, (pity_x, pity_y3))
+    return 
+
+def boutons():
+    draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos)
+    draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos)
+    draw_left_buttons(screen, mouse_pos)
+    return
+
+def afficher_banniere():
+    border_rect = pygame.Rect(
+            banner_border_w - border_thickness,
+            banner_border_h - border_thickness,
+            banniere.get_width() + (border_thickness * 2),
+            banniere.get_height() + (border_thickness * 2))
+    pygame.draw.rect(screen, (178, 180, 166), border_rect, border_thickness, border_radius=border_radius)
+    screen.blit(banniere, (banner_border_w, banner_border_h))
+    return
+
 # --- Boucle principale ---
 running = True
 clock = pygame.time.Clock()
@@ -724,34 +750,17 @@ while running:
     screen.fill((0, 0, 0))
     screen.blit(background, (WIDTH//2 - background.get_width()//2, HEIGHT//2 - background.get_height()//2))
     if wish_splash_art is None:
-        border_rect = pygame.Rect(
-            banner_border_w - border_thickness,
-            banner_border_h - border_thickness,
-            banniere.get_width() + (border_thickness * 2),
-            banniere.get_height() + (border_thickness * 2)
-        )
-        pygame.draw.rect(screen, (178, 180, 166), border_rect, border_thickness, border_radius=border_radius)
-        screen.blit(banniere, (banner_border_w, banner_border_h))
+        afficher_banniere()
     else:
         screen.blit(background_wishing, (WIDTH//2 - background_wishing.get_width()//2, HEIGHT//2 - background_wishing.get_height()//2))
-        afficher_splash_art(screen, wish_splash_art, animation_progress)
+        animer_splash_art(screen, wish_splash_art, animation_progress)
         
         if animation_progress < 1.0:
-            animation_progress += 0.08
+            animation_progress += 0.1
     
-    # --- Boutons ---
-    draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos)
-    draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos)
-    draw_left_buttons(screen, mouse_pos)
+    boutons()
+    actualiser_text_pity()
     
-    # --- Texte Pity ---
-    pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
-    odd_5_star =(pity_5_star - soft_pity) * ((1 -(proba_effective_5_star)) / (hard_pity - soft_pity)) + (proba_effective_5_star) if pity_5_star > soft_pity else (proba_effective_5_star)
-    pity_text_2 = button_font.render(f"chance 5★: {min(odd_5_star*100, 100):.2f}%", True, (255, 215, 0))
-    pity_text_3 = button_font.render(f"5★ limité garanti: {guaranteed_5_star}", True, (255, 215, 0))
-    screen.blit(pity_text, (pity_x, pity_y))
-    screen.blit(pity_text_2, (pity_x, pity_y2))
-    screen.blit(pity_text_3, (pity_x, pity_y3))
     # --- Gestion events (boutons et souris) ---
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -803,9 +812,9 @@ while running:
                         wish_splash_art = None
                         animation_progress = 0.0
 
+    
     if use_custom_cursor:
         afficher_souris()
-    
     # --- Mettre à jour écran + gerer vitesse constanteh ---
     pygame.display.flip()
     delta_time = clock.tick(60)/1000
