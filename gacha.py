@@ -14,90 +14,99 @@ characters = {
     "5_star": [
         {#Columbina
             "name": "Columbina", 
-            "image": "pygame/img/5_star/Columbina.png", 
-            "banniere": "pygame/img/banniere/Columbina.png",
+            "image": "img/5_star/Columbina.png", 
+            "banniere": "img/banniere/Columbina.png",
             "featured_4_star": ["Ifa", "Sethos", "Fischl"],
             "type": None
         },
         {#Zhongli
             "name": "Zhongli", 
-            "image": "pygame/img/5_star/Zhongli.png", 
-            "banniere": "pygame/img/banniere/Zhongli.png",
+            "image": "img/5_star/Zhongli.png", 
+            "banniere": "img/banniere/Zhongli.png",
             "featured_4_star": ["Rosaria", "Lan Yan", "Yun Jin"],
             "type": None
         },
         {#Skirk
             "name": "Skirk", 
-            "image": "pygame/img/5_star/Skirk.png", 
-            "banniere": "pygame/img/banniere/Skirk.png",
+            "image": "img/5_star/Skirk.png", 
+            "banniere": "img/banniere/Skirk.png",
             "featured_4_star": ["Diona", "Candace", "Dahlia"],
             "type": None
         },
         {#Mavuika
             "name": "Mavuika", 
-            "image": "pygame/img/5_star/Mavuika.png", 
-            "banniere": "pygame/img/banniere/Mavuika.png",
+            "image": "img/5_star/Mavuika.png", 
+            "banniere": "img/banniere/Mavuika.png",
             "featured_4_star": ["Xiangling", "Yaoyao", "Iansan"],
             "type": None
         },
         {#Citlali
             "name": "Citlali", 
-            "image": "pygame/img/5_star/Citlali.png", 
-            "banniere": "pygame/img/banniere/Citlali.png",
+            "image": "img/5_star/Citlali.png", 
+            "banniere": "img/banniere/Citlali.png",
             "featured_4_star": ["Diona", "Kachina", "Bennett"],
             "type": None
         },
         {#Xilonen
             "name": "Xilonen", 
-            "image": "pygame/img/5_star/Xilonen.png", 
-            "banniere": "pygame/img/banniere/Xilonen.png",
+            "image": "img/5_star/Xilonen.png", 
+            "banniere": "img/banniere/Xilonen.png",
             "featured_4_star": ["Faruzan", "Beidou", "Yanfei"],
+            "type": None
+        },
+        {#Shenhe
+            "name": "Shenhe", 
+            "image": "img/5_star/Shenhe.png", 
+            "banniere": "img/banniere/Shenhe.png",
+            "featured_4_star": ["Sucrose", "Mika", "Diona"],
             "type": None
         },
     ],
     "5_star_perma": [
-        {"name": "Qiqi", "image": "pygame/img/5_star/Qiqi.png","type": None},
-        {"name": "Dehya", "image": "pygame/img/5_star/Dehya.png","type": None},
-        {"name": "Diluc", "image": "pygame/img/5_star/Diluc.png", "type": None},
-        {"name": "Jean", "image": "pygame/img/5_star/Jean.png", "type": None},
-        {"name": "Keqing", "image": "pygame/img/5_star/Keqing.png", "type": None},
-        {"name": "Mona", "image": "pygame/img/5_star/Mona.png", "type": None},
-        {"name": "Tighnari", "image": "pygame/img/5_star/Tighnari.png", "type": None},
-        {"name": "Yumemizuki Mizuki", "image": "pygame/img/5_star/Yumemizuki_Mizuki.png", "type": None},
+        {"name": "Qiqi", "image": "img/5_star/Qiqi.png","type": None},
+        {"name": "Dehya", "image": "img/5_star/Dehya.png","type": None},
+        {"name": "Diluc", "image": "img/5_star/Diluc.png", "type": None},
+        {"name": "Jean", "image": "img/5_star/Jean.png", "type": None},
+        {"name": "Keqing", "image": "img/5_star/Keqing.png", "type": None},
+        {"name": "Mona", "image": "img/5_star/Mona.png", "type": None},
+        {"name": "Tighnari", "image": "img/5_star/Tighnari.png", "type": None},
+        {"name": "Yumemizuki Mizuki", "image": "img/5_star/Yumemizuki_Mizuki.png", "type": None},
     ],
     "4_star": [
-        {"name": "Beidou", "image": "pygame/img/4_star/Beidou.png", "type": None},
-        {"name": "Bennett", "image": "pygame/img/4_star/Bennett.png", "type": None},
-        {"name": "Sethos", "image": "pygame/img/4_star/Sethos.png", "type": None},
-        {"name": "Candace", "image": "pygame/img/4_star/Candace.png", "type": None},
-        {"name": "Dahlia", "image": "pygame/img/4_star/Dahlia.png", "type": None},
-        {"name": "Diona", "image": "pygame/img/4_star/Diona.png", "type": None},
-        {"name": "Faruzan", "image": "pygame/img/4_star/Faruzan.png", "type": None},
-        {"name": "Fischl", "image": "pygame/img/4_star/Fischl.png", "type": None},
-        {"name": "Ifa", "image": "pygame/img/4_star/Ifa.png", "type": None},
-        {"name": "Iansan", "image": "pygame/img/4_star/Iansan.png", "type": None},
-        {"name": "Kachina", "image": "pygame/img/4_star/Kachina.png", "type": None},
-        {"name": "Lan Yan", "image": "pygame/img/4_star/Lan_Yan.png", "type": None},
-        {"name": "Rosaria", "image": "pygame/img/4_star/Rosaria.png", "type": None},
-        {"name": "Yun Jin", "image": "pygame/img/4_star/Yun_Jin.png", "type": None},
-        {"name": "Yaoyao", "image": "pygame/img/4_star/Yaoyao.png", "type": None},
-        {"name": "Yanfei", "image": "pygame/img/4_star/Yanfei.png", "type": None},
-        {"name": "Xiangling", "image": "pygame/img/4_star/Xiangling.png", "type": None},
+        {"name": "Beidou", "image": "img/4_star/Beidou.png", "type": None},
+        {"name": "Bennett", "image": "img/4_star/Bennett.png", "type": None},
+        {"name": "Sethos", "image": "img/4_star/Sethos.png", "type": None},
+        {"name": "Candace", "image": "img/4_star/Candace.png", "type": None},
+        {"name": "Dahlia", "image": "img/4_star/Dahlia.png", "type": None},
+        {"name": "Diona", "image": "img/4_star/Diona.png", "type": None},
+        {"name": "Faruzan", "image": "img/4_star/Faruzan.png", "type": None},
+        {"name": "Fischl", "image": "img/4_star/Fischl.png", "type": None},
+        {"name": "Ifa", "image": "img/4_star/Ifa.png", "type": None},
+        {"name": "Iansan", "image": "img/4_star/Iansan.png", "type": None},
+        {"name": "Kachina", "image": "img/4_star/Kachina.png", "type": None},
+        {"name": "Lan Yan", "image": "img/4_star/Lan_Yan.png", "type": None},
+        {"name": "Mika", "image": "img/4_star/Mika.png", "type": None},
+        {"name": "Rosaria", "image": "img/4_star/Rosaria.png", "type": None},
+        {"name": "Sucrose", "image": "img/4_star/Sucrose.png", "type": None},
+        {"name": "Yun Jin", "image": "img/4_star/Yun_Jin.png", "type": None},
+        {"name": "Yaoyao", "image": "img/4_star/Yaoyao.png", "type": None},
+        {"name": "Yanfei", "image": "img/4_star/Yanfei.png", "type": None},
+        {"name": "Xiangling", "image": "img/4_star/Xiangling.png", "type": None},
     ],
     "3_star": [
-        {"name": "Thrilling Tale of Dragon Slayer", "image": "pygame/img/3_star/Thrilling_Tale_of_Dragon_Slayer.png", "type": "catalyst"},
-        {"name": "Emerald Orb", "image": "pygame/img/3_star/Emerald_Orb.png", "type": "catalyst"},
-        {"name": "Guide de magie", "image": "pygame/img/3_star/Magic_Guide.png", "type": "catalyst"},
-        {"name": "Ferrous Shadow", "image": "pygame/img/3_star/Ferrous_Shadow.png","type": "claymore"},
-        {"name": "Debate Club", "image": "pygame/img/3_star/Debate_Club.png","type": "claymore"},
-        {"name": "Bloodtainted Greatsword", "image": "pygame/img/3_star/Bloodtainted_Greatsword.png","type": "claymore"},
-        {"name": "Slingshot", "image": "pygame/img/3_star/Slingshot.png", "type": "bow"},
-        {"name": "Arc du corbeau", "image": "pygame/img/3_star/Raven_Bow.png", "type": "bow"},
-        {"name": "Sharpshooter's Oath", "image": "pygame/img/3_star/Sharpshooter's_Oath.png", "type": "bow"},
-        {"name": "Black Tassel", "image": "pygame/img/3_star/Black_tassel.png", "type": "polearm"},
-        {"name": "Lame froide", "image": "pygame/img/3_star/Cool_Steel.png", "type": "sword"},  
-        {"name": "Messager de l'Aube", "image": "pygame/img/3_star/Harbinger_of_Dawn.png", "type": "sword"}, 
-        {"name": "Syrider Sword", "image": "pygame/img/3_star/Skyrider_Sword.png", "type": "sword"}, 
+        {"name": "Thrilling Tale of Dragon Slayer", "image": "img/3_star/Thrilling_Tale_of_Dragon_Slayer.png", "type": "catalyst"},
+        {"name": "Emerald Orb", "image": "img/3_star/Emerald_Orb.png", "type": "catalyst"},
+        {"name": "Guide de magie", "image": "img/3_star/Magic_Guide.png", "type": "catalyst"},
+        {"name": "Ferrous Shadow", "image": "img/3_star/Ferrous_Shadow.png","type": "claymore"},
+        {"name": "Debate Club", "image": "img/3_star/Debate_Club.png","type": "claymore"},
+        {"name": "Bloodtainted Greatsword", "image": "img/3_star/Bloodtainted_Greatsword.png","type": "claymore"},
+        {"name": "Slingshot", "image": "img/3_star/Slingshot.png", "type": "bow"},
+        {"name": "Arc du corbeau", "image": "img/3_star/Raven_Bow.png", "type": "bow"},
+        {"name": "Sharpshooter's Oath", "image": "img/3_star/Sharpshooter's_Oath.png", "type": "bow"},
+        {"name": "Black Tassel", "image": "img/3_star/Black_tassel.png", "type": "polearm"},
+        {"name": "Lame froide", "image": "img/3_star/Cool_Steel.png", "type": "sword"},  
+        {"name": "Messager de l'Aube", "image": "img/3_star/Harbinger_of_Dawn.png", "type": "sword"}, 
+        {"name": "Syrider Sword", "image": "img/3_star/Skyrider_Sword.png", "type": "sword"}, 
     ]
 }
 # --- Initalisation ---
@@ -106,13 +115,13 @@ HEIGHT = 660 #   <--------------------------------------------------------------
 WIDTH = int(HEIGHT*16/9)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Totally not a Genshin Impact wishing replica")
-pygame.display.set_icon(pygame.image.load("pygame/img/icon.png").convert_alpha())
+pygame.display.set_icon(pygame.image.load("img/icon.png").convert_alpha())
 font_size = int(HEIGHT * 40 / 900)  
-font = pygame.font.Font("pygame/font/genshin.ttf", font_size)
+font = pygame.font.Font("font/genshin.ttf", font_size)
 button_font_size = int(HEIGHT * 30 / 900)
-button_font = pygame.font.Font("pygame/font/genshin.ttf", button_font_size)
+button_font = pygame.font.Font("font/genshin.ttf", button_font_size)
 try:
-    cursor_img = pygame.image.load("pygame/img/Cursor.png").convert_alpha()
+    cursor_img = pygame.image.load("img/Cursor.png").convert_alpha()
     cursor_size = int(HEIGHT * 32 / 900)
     cursor_img = pygame.transform.scale(cursor_img, (cursor_size, cursor_size))
     pygame.mouse.set_visible(False)
@@ -137,8 +146,8 @@ def scale_with_borders(image, target_width, target_height, border_percent=15):
     new_height = target_height - (2 * border_h)
     return pygame.transform.scale(image, (new_width, new_height)), border_w, border_h
 
-background = scale_to_height(pygame.image.load("pygame/img/background.png").convert_alpha(), HEIGHT)
-background_wishing = scale_to_height(pygame.image.load("pygame/img/background_wishing.png").convert_alpha(), HEIGHT)
+background = scale_to_height(pygame.image.load("img/background.png").convert_alpha(), HEIGHT)
+background_wishing = scale_to_height(pygame.image.load("img/background_wishing.png").convert_alpha(), HEIGHT)
 # --- Initialisation bannière ---
 current_banner_index = 0  
 banniere_path = characters["5_star"][current_banner_index]["banniere"]
@@ -255,13 +264,13 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
     if wish_rarete == "5_star":
         new_pity_5_star = 0
         new_pity_4_star += 1
-        wish_animation = "pygame/videos/pull_5_star.mp4"
+        wish_animation = "videos/pull_5_star.mp4"
     elif wish_rarete == "4_star":
-        wish_animation = "pygame/videos/pull_4_star.mp4"
+        wish_animation = "videos/pull_4_star.mp4"
         new_pity_4_star = 0
         new_pity_5_star += 1
     else:
-        wish_animation = "pygame/videos/pull_3_star.mp4"
+        wish_animation = "videos/pull_3_star.mp4"
         new_pity_5_star += 1
         new_pity_4_star += 1
 
@@ -374,7 +383,7 @@ def weapon_background_path(weapon):
     Args:
         weapon (str): type d'arme ("sword", "claymore", "polearm", "bow", "catalyst")
     """
-    return pygame.image.load(f"pygame/img/Weapon_Background/{weapon}.png").convert_alpha()
+    return pygame.image.load(f"img/Weapon_Background/{weapon}.png").convert_alpha()
 
 def darken(rgb, coefficient=0.5):
         """
@@ -408,12 +417,12 @@ def ecran_multi(results, screen, border=5, ecart=int(5*10/multi)):
     results = sorted(results, key=lambda x: rarete_priority[x["rarete"]])
     
     try:
-        mask_template = pygame.image.load("pygame/img/Mask.png").convert_alpha()
+        mask_template = pygame.image.load("img/Mask.png").convert_alpha()
     except:
-        print("Erreur: Impossible de charger pygame/img/Mask.png")
+        print("Erreur: Impossible de charger img/Mask.png")
         mask_template = None
     try:
-        background_multi = pygame.image.load("pygame/img/background_multi.png").convert_alpha()
+        background_multi = pygame.image.load("img/background_multi.png").convert_alpha()
         background_multi.set_alpha(170)
     except:
         background_multi = None
@@ -425,9 +434,9 @@ def ecran_multi(results, screen, border=5, ecart=int(5*10/multi)):
         path_weapon = res["character"]["image"]
         rarete = res["rarete"]
         if rarete in ["5_star", "5_star_perma"]:
-            path = f"pygame/img/5_star/multi/{name}.png"
+            path = f"img/5_star/multi/{name}.png"
         elif rarete == "4_star":
-            path = f"pygame/img/4_star/multi/{name}.png"
+            path = f"img/4_star/multi/{name}.png"
         else:
             path = path_weapon
             print(res["character"]["image"])
