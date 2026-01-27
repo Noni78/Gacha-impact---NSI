@@ -151,7 +151,7 @@ button_bottom_margin = int(HEIGHT * 80 / 900)
 button_x1_rect = pygame.Rect(WIDTH//2 - button_width - button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
 button_multi_rect = pygame.Rect(WIDTH//2 + button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
 button_color = (255, 255, 230)
-button_hover_color = (240, 240, 230)
+button_hover_color = (200, 200, 170)
 # --- Boutons gauche pour choix bannière ---
 left_button_width = int(HEIGHT * 200 / 900)
 left_button_height = int(HEIGHT * 50 / 900)
@@ -196,7 +196,7 @@ def afficher_splash_art(screen, splash_art, progress=1.0):
     scaled_splash.set_alpha(alpha)
     screen.blit(scaled_splash, (x, y))
 
-def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,w5=0.006,w4=0.08):
+def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,weight_5_star=0.006,weight_4_star=0.08):
     """
     Calcule la rareté d'un tirage sans modifier les compteurs de pity.
     
@@ -215,13 +215,13 @@ def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,w5=0.006,w4=0.08
     if pity_4_star >= 9:
         return "4_star"
     if pity_5_star > soft_pity:
-        w5 += (pity_5_star - soft_pity) * ((1 - 0.006) / (hard_pity - soft_pity))
+        weight_5_star += (pity_5_star - soft_pity) * ((1 - 0.006) / (hard_pity - soft_pity))
 
-    w5 = min(w5, 1 - w4)
-    w3 = 1 - w4 - w5
+    weight_5_star = min(weight_5_star, 1 - weight_4_star)
+    weight_3_star = 1 - weight_4_star - weight_5_star
     tirage = random.choices(
         ["5_star", "4_star", "3_star"],
-        [w5, w4, w3]
+        [weight_5_star, weight_4_star, weight_3_star]
         )[0]
     return tirage
 
