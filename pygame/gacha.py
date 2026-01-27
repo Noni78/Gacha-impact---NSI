@@ -386,13 +386,10 @@ def darken(rgb, coefficient=0.5):
         return tuple(int(i * coefficient) for i in rgb)
 
 def get_color(rare:str):
-
         if rare in ["5_star", "5_star_perma"]:
             return (220, 190, 20)
-
         if rare == "4_star":
             return (120, 60, 185)
-
         return (80, 140, 225)
 
 def afficher_souris():
