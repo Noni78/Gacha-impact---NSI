@@ -395,6 +395,12 @@ def get_color(rare:str):
 
         return (80, 140, 225)
 
+def afficher_souris():
+    mouse_pos = pygame.mouse.get_pos()
+    cursor_x = mouse_pos[0] - cursor_img.get_width() // 2 
+    cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
+    screen.blit(cursor_img, (cursor_x, cursor_y))
+
 def ecran_multi(results, screen, border=5, ecart=int(5*10/multi)):
     """
     Écran résumé de la multi avec masque personnalisé
@@ -530,10 +536,7 @@ def ecran_multi(results, screen, border=5, ecart=int(5*10/multi)):
                     return True
 
         if use_custom_cursor:
-            mouse_pos = pygame.mouse.get_pos()
-            cursor_x = mouse_pos[0] - cursor_img.get_width() // 2
-            cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
-            screen.blit(cursor_img, (cursor_x, cursor_y))
+            afficher_souris()
         pygame.display.flip()
         clock.tick(60)
 
@@ -660,6 +663,7 @@ def afficher_resultats(results, screen):
 
     return True, True
 
+
 # --- Boucle principale ---
 running = True
 clock = pygame.time.Clock()
@@ -756,9 +760,7 @@ while running:
                         animation_progress = 0.0
 
     if use_custom_cursor:
-        cursor_x = mouse_pos[0] - cursor_img.get_width() // 2 
-        cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
-        screen.blit(cursor_img, (cursor_x, cursor_y))
+        afficher_souris()
     
     # --- Mettre à jour écran + gerer vitesse constanteh ---
     pygame.display.flip()
