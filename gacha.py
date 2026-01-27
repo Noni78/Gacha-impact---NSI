@@ -10,7 +10,10 @@ soft_pity = 73
 hard_pity = 90
 guaranteed_5_star = False
 multi = 10  # Petit conseil ne pas mettre au dessus de 100, et pas en dessous de 5 sinon c'est pas beau
-chance = 500 # défaut : 100
+chance_globale = 100/100 # défaut : 100%
+proba_init_5_star = 0.006
+proba_init_4_star = 0.051
+proba_effective_5_star = proba_init_5_star*chance_globale
 characters = {
     "5_star": [
         {#Columbina
@@ -147,6 +150,7 @@ characters = {
         {"name": "Syrider Sword", "image": "img/3_star/Skyrider_Sword.png", "type": "sword"}, 
     ]
 }
+
 # --- Initalisation ---
 pygame.init()
 HEIGHT = 660 #   <------------------------------------------------------------------------------ ici height
@@ -243,7 +247,7 @@ def afficher_splash_art(screen, splash_art, progress=1.0):
     scaled_splash.set_alpha(alpha)
     screen.blit(scaled_splash, (x, y))
 
-def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,weight_5_star=0.006*(chance/100),weight_4_star=0.08*(chance/100)):
+def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,weight_5_star=proba_effective_5_star,weight_4_star=proba_init_4_star*(chance_globale)):
     """
     Calcule la rareté d'un tirage sans modifier les compteurs de pity.
     
@@ -262,7 +266,7 @@ def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,weight_5_star=0.
     if pity_4_star >= 9:
         return "4_star"
     if pity_5_star > soft_pity:
-        weight_5_star += (pity_5_star - soft_pity) * ((1 - 0.006) / (hard_pity - soft_pity))
+        weight_5_star += (pity_5_star - soft_pity) * ((1 - proba_init_5_star) / (hard_pity - soft_pity))
 
     weight_5_star = min(weight_5_star, 1 - weight_4_star)
     weight_3_star = 1 - weight_4_star - weight_5_star
@@ -742,8 +746,8 @@ while running:
     
     # --- Texte Pity ---
     pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
-    odd_5_star =(pity_5_star - soft_pity) * ((1 - 0.006) / (hard_pity - soft_pity)) + 0.006 if pity_5_star > soft_pity else 0.006
-    pity_text_2 = button_font.render(f"Chance 5★: {min(odd_5_star*100, 100):.2f}%", True, (255, 215, 0))
+    odd_5_star =(pity_5_star - soft_pity) * ((1 -(proba_effective_5_star)) / (hard_pity - soft_pity)) + (proba_effective_5_star) if pity_5_star > soft_pity else (proba_effective_5_star)
+    pity_text_2 = button_font.render(f"chance 5★: {min(odd_5_star*100, 100):.2f}%", True, (255, 215, 0))
     pity_text_3 = button_font.render(f"5★ limité garanti: {guaranteed_5_star}", True, (255, 215, 0))
     screen.blit(pity_text, (pity_x, pity_y))
     screen.blit(pity_text_2, (pity_x, pity_y2))
