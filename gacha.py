@@ -4,12 +4,13 @@ import random
 import cv2
 
 # --- Paramètres Voeu ---
-pity_5_star = 0
+pity_5_star = 70
 pity_4_star = 0
 soft_pity = 73
 hard_pity = 90
 guaranteed_5_star = False
-multi = 10  #Petit conseil ne pas mettre au dessus de 100, et pas en dessous de 5 sinon c'est pas beau
+multi = 10  # Petit conseil ne pas mettre au dessus de 100, et pas en dessous de 5 sinon c'est pas beau
+chance = 500 # défaut : 100
 characters = {
     "5_star": [
         {#Columbina
@@ -61,6 +62,13 @@ characters = {
             "featured_4_star": ["Sucrose", "Mika", "Diona"],
             "type": None
         },
+        {#Arlechinno
+            "name": "Arlecchino", 
+            "image": "img/5_star/Arlecchino.png", 
+            "banniere": "img/banniere/Arlecchino.png",
+            "featured_4_star": ["Lynette", "Freminet", "Xiangling"],
+            "type": None
+        },
     ],
     "5_star_perma": [
         {"name": "Qiqi", "image": "img/5_star/Qiqi.png","type": None},
@@ -73,25 +81,55 @@ characters = {
         {"name": "Yumemizuki Mizuki", "image": "img/5_star/Yumemizuki_Mizuki.png", "type": None},
     ],
     "4_star": [
+        {"name": "Aino", "image": "img/4_star/Aino.png", "type": None},
+        {"name": "Amber", "image": "img/4_star/Amber.png", "type": None},
+        {"name": "Barbara", "image": "img/4_star/Barbara.png", "type": None},
         {"name": "Beidou", "image": "img/4_star/Beidou.png", "type": None},
         {"name": "Bennett", "image": "img/4_star/Bennett.png", "type": None},
-        {"name": "Sethos", "image": "img/4_star/Sethos.png", "type": None},
         {"name": "Candace", "image": "img/4_star/Candace.png", "type": None},
+        {"name": "Charlotte", "image": "img/4_star/Charlotte.png", "type": None},
+        {"name": "Chevreuse", "image": "img/4_star/Chevreuse.png", "type": None},
+        {"name": "Chongyun", "image": "img/4_star/Chongyun.png", "type": None},
+        {"name": "Collei", "image": "img/4_star/Collei.png", "type": None},
         {"name": "Dahlia", "image": "img/4_star/Dahlia.png", "type": None},
         {"name": "Diona", "image": "img/4_star/Diona.png", "type": None},
+        {"name": "Dori", "image": "img/4_star/Dori.png", "type": None},
         {"name": "Faruzan", "image": "img/4_star/Faruzan.png", "type": None},
         {"name": "Fischl", "image": "img/4_star/Fischl.png", "type": None},
+        {"name": "Freminet", "image": "img/4_star/Freminet.png", "type": None},
+        {"name": "Gaming", "image": "img/4_star/Gaming.png", "type": None},
+        {"name": "Gorou", "image": "img/4_star/Gorou.png", "type": None},
         {"name": "Ifa", "image": "img/4_star/Ifa.png", "type": None},
         {"name": "Iansan", "image": "img/4_star/Iansan.png", "type": None},
+        {"name": "Jahoda", "image": "img/4_star/Jahoda.png", "type": None},
         {"name": "Kachina", "image": "img/4_star/Kachina.png", "type": None},
+        {"name": "Kaeya", "image": "img/4_star/Kaeya.png", "type": None},
+        {"name": "Kaveh", "image": "img/4_star/Kaveh.png", "type": None},
+        {"name": "Kirara", "image": "img/4_star/Kirara.png", "type": None},
+        {"name": "Kujou Sara", "image": "img/4_star/Kujou_Sara.png", "type": None},
+        {"name": "Kuki Shinobu", "image": "img/4_star/Kuki_Shinobu.png", "type": None},
         {"name": "Lan Yan", "image": "img/4_star/Lan_Yan.png", "type": None},
+        {"name": "Layla", "image": "img/4_star/Layla.png", "type": None},
+        {"name": "Lisa", "image": "img/4_star/Lisa.png", "type": None},
+        {"name": "Lynette", "image": "img/4_star/Lynette.png", "type": None},
         {"name": "Mika", "image": "img/4_star/Mika.png", "type": None},
+        {"name": "Ningguang", "image": "img/4_star/Ningguang.png", "type": None},
+        {"name": "Noelle", "image": "img/4_star/Noelle.png", "type": None},
+        {"name": "Ororon", "image": "img/4_star/Ororon.png", "type": None},
+        {"name": "Razor", "image": "img/4_star/Razor.png", "type": None},
         {"name": "Rosaria", "image": "img/4_star/Rosaria.png", "type": None},
+        {"name": "Sayu", "image": "img/4_star/Sayu.png", "type": None},
+        {"name": "Sethos", "image": "img/4_star/Sethos.png", "type": None},
+        {"name": "Shikanoin Heizou", "image": "img/4_star/Shikanoin_Heizou.png", "type": None},
         {"name": "Sucrose", "image": "img/4_star/Sucrose.png", "type": None},
+        {"name": "Thoma", "image": "img/4_star/Thoma.png", "type": None},
+        {"name": "Xiangling", "image": "img/4_star/Xiangling.png", "type": None},
+        {"name": "Xingqiu", "image": "img/4_star/Xingqiu.png", "type": None},
+        {"name": "Xinyan", "image": "img/4_star/Xinyan.png", "type": None},
         {"name": "Yun Jin", "image": "img/4_star/Yun_Jin.png", "type": None},
         {"name": "Yaoyao", "image": "img/4_star/Yaoyao.png", "type": None},
         {"name": "Yanfei", "image": "img/4_star/Yanfei.png", "type": None},
-        {"name": "Xiangling", "image": "img/4_star/Xiangling.png", "type": None},
+        
     ],
     "3_star": [
         {"name": "Thrilling Tale of Dragon Slayer", "image": "img/3_star/Thrilling_Tale_of_Dragon_Slayer.png", "type": "catalyst"},
@@ -149,7 +187,7 @@ def scale_with_borders(image, target_width, target_height, border_percent=15):
 background = scale_to_height(pygame.image.load("img/background.png").convert_alpha(), HEIGHT)
 background_wishing = scale_to_height(pygame.image.load("img/background_wishing.png").convert_alpha(), HEIGHT)
 # --- Initialisation bannière ---
-current_banner_index = 0  
+current_banner_index = random.randint(0,7) # l'index correspond aux 5 étoiles non perma dans l'ordre ou ils sont dans le dictionnaire character, ici c'est aléatoire
 banniere_path = characters["5_star"][current_banner_index]["banniere"]
 banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)
 # --- Boutons Voeux ---
@@ -192,7 +230,7 @@ def afficher_splash_art(screen, splash_art, progress=1.0):
         splash_art: image du personnage
         progress (float): progression de l'animation de 0 à 1
     """
-    scale_factor = 1.8 - (0.5 * min(progress, 1))
+    scale_factor = 2 - (0.6 * min(progress, 1))
     
     new_width = int(splash_art.get_width() * scale_factor)
     new_height = int(splash_art.get_height() * scale_factor)
@@ -205,7 +243,7 @@ def afficher_splash_art(screen, splash_art, progress=1.0):
     scaled_splash.set_alpha(alpha)
     screen.blit(scaled_splash, (x, y))
 
-def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,weight_5_star=0.006,weight_4_star=0.08):
+def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,weight_5_star=0.006*(chance/100),weight_4_star=0.08*(chance/100)):
     """
     Calcule la rareté d'un tirage sans modifier les compteurs de pity.
     
@@ -318,8 +356,6 @@ def play_video(video_path, screen, loop=False):
         fps = 30
     
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    print(f"Lecture de {video_path}")
-    print(f"FPS: {fps}, Frames totales: {total_frames}")
     
     clock = pygame.time.Clock()
     playing = True
@@ -439,7 +475,6 @@ def ecran_multi(results, screen, border=5, ecart=int(5*10/multi)):
             path = f"img/4_star/multi/{name}.png"
         else:
             path = path_weapon
-            print(res["character"]["image"])
         try:
             img = pygame.image.load(path).convert_alpha()
             images.append(img)
