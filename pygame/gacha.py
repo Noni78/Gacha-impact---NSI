@@ -112,7 +112,7 @@ font = pygame.font.Font("pygame/font/genshin.ttf", font_size)
 button_font_size = int(HEIGHT * 30 / 900)
 button_font = pygame.font.Font("pygame/font/genshin.ttf", button_font_size)
 try:
-    cursor_img = pygame.image.load("pygame/img/cursor.png").convert_alpha()
+    cursor_img = pygame.image.load("pygame/img/Cursor.png").convert_alpha()
     cursor_size = int(HEIGHT * 32 / 900)
     cursor_img = pygame.transform.scale(cursor_img, (cursor_size, cursor_size))
     pygame.mouse.set_visible(False)
@@ -756,11 +756,11 @@ while running:
                         animation_progress = 0.0
 
     if use_custom_cursor:
-        cursor_x = mouse_pos[0] - cursor_img.get_width() // 2
+        cursor_x = mouse_pos[0] - cursor_img.get_width() // 2 
         cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
         screen.blit(cursor_img, (cursor_x, cursor_y))
     
-    # --- Mettre à jour écran + gerer framerate constant ---
+    # --- Mettre à jour écran + gerer vitesse constanteh ---
     pygame.display.flip()
     delta_time = clock.tick(60)/1000
     delta_time = min(delta_time, 0.05)
