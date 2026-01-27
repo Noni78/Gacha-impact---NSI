@@ -660,7 +660,6 @@ def afficher_resultats(results, screen):
 
     return True, True
 
-
 # --- Boucle principale ---
 running = True
 clock = pygame.time.Clock()
