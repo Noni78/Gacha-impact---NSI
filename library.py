@@ -123,6 +123,30 @@ def play_video(video_path, screen, WIDTH, HEIGHT, loop=False):
     #print("Vidéo terminée")
     return True
 
+def weapon_background_path(weapon):
+    """
+    Donne le chemin de l'image de fond selon le type d'arme.
+    Args:
+        weapon (str): type d'arme ("sword", "claymore", "polearm", "bow", "catalyst")
+    """
+    return pygame.image.load(f"img/Weapon_Background/{weapon}.png").convert_alpha()
+
+def draw_button(screen, rect, text, mouse_pos,HEIGHT,hover_color,color,font):
+    """Dessine bouton"""
+    if rect.collidepoint(mouse_pos):
+        color = hover_color
+    else:
+        color = color
+    
+    border_radius = int(HEIGHT * 30 / 900)
+    border_width = int(HEIGHT * 3 / 900)
+    
+    pygame.draw.rect(screen, color, rect, border_radius=border_radius)
+    pygame.draw.rect(screen, (180, 178, 178), rect, border_width, border_radius=border_radius) 
+    
+    text = font.render(text, True, (183, 167, 155))
+    text_rect = text.get_rect(center=rect.center)
+    screen.blit(text, text_rect)
 # --- Calculs ---
 def rarete(pity_5, pity_4, proba_5=0.006, proba_4=0.051,chance=1.0,soft_pity=70, hard_pity=90):
     """

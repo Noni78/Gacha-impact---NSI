@@ -3,7 +3,7 @@ import sys
 import random
 import cv2
 from library import *
-
+from character import *
 # --- Paramètres Voeu ---
 pity_5_star = 70
 pity_4_star = 0
@@ -15,142 +15,6 @@ chance_globale = 100/100 # défaut : 100%
 proba_init_5_star = 0.006
 proba_init_4_star = 0.051
 proba_effective_5_star = proba_init_5_star*chance_globale
-characters = {
-    "5_star": [
-        {#Columbina
-            "name": "Columbina", 
-            "image": "img/5_star/Columbina.png", 
-            "banniere": "img/banniere/Columbina.png",
-            "featured_4_star": ["Ifa", "Sethos", "Fischl"],
-            "type": None
-        },
-        {#Zhongli
-            "name": "Zhongli", 
-            "image": "img/5_star/Zhongli.png", 
-            "banniere": "img/banniere/Zhongli.png",
-            "featured_4_star": ["Rosaria", "Lan Yan", "Yun Jin"],
-            "type": None
-        },
-        {#Skirk
-            "name": "Skirk", 
-            "image": "img/5_star/Skirk.png", 
-            "banniere": "img/banniere/Skirk.png",
-            "featured_4_star": ["Diona", "Candace", "Dahlia"],
-            "type": None
-        },
-        {#Mavuika
-            "name": "Mavuika", 
-            "image": "img/5_star/Mavuika.png", 
-            "banniere": "img/banniere/Mavuika.png",
-            "featured_4_star": ["Xiangling", "Yaoyao", "Iansan"],
-            "type": None
-        },
-        {#Citlali
-            "name": "Citlali", 
-            "image": "img/5_star/Citlali.png", 
-            "banniere": "img/banniere/Citlali.png",
-            "featured_4_star": ["Diona", "Kachina", "Bennett"],
-            "type": None
-        },
-        {#Xilonen
-            "name": "Xilonen", 
-            "image": "img/5_star/Xilonen.png", 
-            "banniere": "img/banniere/Xilonen.png",
-            "featured_4_star": ["Faruzan", "Beidou", "Yanfei"],
-            "type": None
-        },
-        {#Shenhe
-            "name": "Shenhe", 
-            "image": "img/5_star/Shenhe.png", 
-            "banniere": "img/banniere/Shenhe.png",
-            "featured_4_star": ["Sucrose", "Mika", "Diona"],
-            "type": None
-        },
-        {#Arlechinno
-            "name": "Arlecchino", 
-            "image": "img/5_star/Arlecchino.png", 
-            "banniere": "img/banniere/Arlecchino.png",
-            "featured_4_star": ["Lynette", "Freminet", "Xiangling"],
-            "type": None
-        },
-    ],
-    "5_star_perma": [
-        {"name": "Qiqi", "image": "img/5_star/Qiqi.png","type": None},
-        {"name": "Dehya", "image": "img/5_star/Dehya.png","type": None},
-        {"name": "Diluc", "image": "img/5_star/Diluc.png", "type": None},
-        {"name": "Jean", "image": "img/5_star/Jean.png", "type": None},
-        {"name": "Keqing", "image": "img/5_star/Keqing.png", "type": None},
-        {"name": "Mona", "image": "img/5_star/Mona.png", "type": None},
-        {"name": "Tighnari", "image": "img/5_star/Tighnari.png", "type": None},
-        {"name": "Yumemizuki Mizuki", "image": "img/5_star/Yumemizuki_Mizuki.png", "type": None},
-    ],
-    "4_star": [
-        {"name": "Aino", "image": "img/4_star/Aino.png", "type": None},
-        {"name": "Amber", "image": "img/4_star/Amber.png", "type": None},
-        {"name": "Barbara", "image": "img/4_star/Barbara.png", "type": None},
-        {"name": "Beidou", "image": "img/4_star/Beidou.png", "type": None},
-        {"name": "Bennett", "image": "img/4_star/Bennett.png", "type": None},
-        {"name": "Candace", "image": "img/4_star/Candace.png", "type": None},
-        {"name": "Charlotte", "image": "img/4_star/Charlotte.png", "type": None},
-        {"name": "Chevreuse", "image": "img/4_star/Chevreuse.png", "type": None},
-        {"name": "Chongyun", "image": "img/4_star/Chongyun.png", "type": None},
-        {"name": "Collei", "image": "img/4_star/Collei.png", "type": None},
-        {"name": "Dahlia", "image": "img/4_star/Dahlia.png", "type": None},
-        {"name": "Diona", "image": "img/4_star/Diona.png", "type": None},
-        {"name": "Dori", "image": "img/4_star/Dori.png", "type": None},
-        {"name": "Faruzan", "image": "img/4_star/Faruzan.png", "type": None},
-        {"name": "Fischl", "image": "img/4_star/Fischl.png", "type": None},
-        {"name": "Freminet", "image": "img/4_star/Freminet.png", "type": None},
-        {"name": "Gaming", "image": "img/4_star/Gaming.png", "type": None},
-        {"name": "Gorou", "image": "img/4_star/Gorou.png", "type": None},
-        {"name": "Ifa", "image": "img/4_star/Ifa.png", "type": None},
-        {"name": "Iansan", "image": "img/4_star/Iansan.png", "type": None},
-        {"name": "Jahoda", "image": "img/4_star/Jahoda.png", "type": None},
-        {"name": "Kachina", "image": "img/4_star/Kachina.png", "type": None},
-        {"name": "Kaeya", "image": "img/4_star/Kaeya.png", "type": None},
-        {"name": "Kaveh", "image": "img/4_star/Kaveh.png", "type": None},
-        {"name": "Kirara", "image": "img/4_star/Kirara.png", "type": None},
-        {"name": "Kujou Sara", "image": "img/4_star/Kujou_Sara.png", "type": None},
-        {"name": "Kuki Shinobu", "image": "img/4_star/Kuki_Shinobu.png", "type": None},
-        {"name": "Lan Yan", "image": "img/4_star/Lan_Yan.png", "type": None},
-        {"name": "Layla", "image": "img/4_star/Layla.png", "type": None},
-        {"name": "Lisa", "image": "img/4_star/Lisa.png", "type": None},
-        {"name": "Lynette", "image": "img/4_star/Lynette.png", "type": None},
-        {"name": "Mika", "image": "img/4_star/Mika.png", "type": None},
-        {"name": "Ningguang", "image": "img/4_star/Ningguang.png", "type": None},
-        {"name": "Noelle", "image": "img/4_star/Noelle.png", "type": None},
-        {"name": "Ororon", "image": "img/4_star/Ororon.png", "type": None},
-        {"name": "Razor", "image": "img/4_star/Razor.png", "type": None},
-        {"name": "Rosaria", "image": "img/4_star/Rosaria.png", "type": None},
-        {"name": "Sayu", "image": "img/4_star/Sayu.png", "type": None},
-        {"name": "Sethos", "image": "img/4_star/Sethos.png", "type": None},
-        {"name": "Shikanoin Heizou", "image": "img/4_star/Shikanoin_Heizou.png", "type": None},
-        {"name": "Sucrose", "image": "img/4_star/Sucrose.png", "type": None},
-        {"name": "Thoma", "image": "img/4_star/Thoma.png", "type": None},
-        {"name": "Xiangling", "image": "img/4_star/Xiangling.png", "type": None},
-        {"name": "Xingqiu", "image": "img/4_star/Xingqiu.png", "type": None},
-        {"name": "Xinyan", "image": "img/4_star/Xinyan.png", "type": None},
-        {"name": "Yun Jin", "image": "img/4_star/Yun_Jin.png", "type": None},
-        {"name": "Yaoyao", "image": "img/4_star/Yaoyao.png", "type": None},
-        {"name": "Yanfei", "image": "img/4_star/Yanfei.png", "type": None},
-        
-    ],
-    "3_star": [
-        {"name": "Thrilling Tale of Dragon Slayer", "image": "img/3_star/Thrilling_Tale_of_Dragon_Slayer.png", "type": "catalyst"},
-        {"name": "Emerald Orb", "image": "img/3_star/Emerald_Orb.png", "type": "catalyst"},
-        {"name": "Guide de magie", "image": "img/3_star/Magic_Guide.png", "type": "catalyst"},
-        {"name": "Ferrous Shadow", "image": "img/3_star/Ferrous_Shadow.png","type": "claymore"},
-        {"name": "Debate Club", "image": "img/3_star/Debate_Club.png","type": "claymore"},
-        {"name": "Bloodtainted Greatsword", "image": "img/3_star/Bloodtainted_Greatsword.png","type": "claymore"},
-        {"name": "Slingshot", "image": "img/3_star/Slingshot.png", "type": "bow"},
-        {"name": "Arc du corbeau", "image": "img/3_star/Raven_Bow.png", "type": "bow"},
-        {"name": "Sharpshooter's Oath", "image": "img/3_star/Sharpshooter's_Oath.png", "type": "bow"},
-        {"name": "Black Tassel", "image": "img/3_star/Black_tassel.png", "type": "polearm"},
-        {"name": "Lame froide", "image": "img/3_star/Cool_Steel.png", "type": "sword"},  
-        {"name": "Messager de l'Aube", "image": "img/3_star/Harbinger_of_Dawn.png", "type": "sword"}, 
-        {"name": "Syrider Sword", "image": "img/3_star/Skyrider_Sword.png", "type": "sword"}, 
-    ]
-}
 
 # --- Initalisation ---
 pygame.init()
@@ -204,6 +68,38 @@ for i, char in enumerate(characters["5_star"]):
     )
     left_buttons.append((rect, char["name"]))
 # --- Fonctions ---
+
+def afficher_souris():
+    mouse_pos = pygame.mouse.get_pos()
+    cursor_x = mouse_pos[0] - cursor_img.get_width() // 2 
+    cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
+    screen.blit(cursor_img, (cursor_x, cursor_y))
+
+def actualiser_text_pity():
+    pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
+    odd_5_star =(pity_5_star - soft_pity) * ((1 -(proba_effective_5_star)) / (hard_pity - soft_pity)) + (proba_effective_5_star) if pity_5_star > soft_pity else (proba_effective_5_star)
+    pity_text_2 = button_font.render(f"chance 5★: {min(odd_5_star*100, 100):.2f}%", True, (255, 215, 0))
+    pity_text_3 = button_font.render(f"5★ limité garanti: {guaranteed_5_star}", True, (255, 215, 0))
+    screen.blit(pity_text, (pity_x, pity_y))
+    screen.blit(pity_text_2, (pity_x, pity_y2))
+    screen.blit(pity_text_3, (pity_x, pity_y3))
+    return 
+
+def boutons():
+    draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos,HEIGHT,button_hover_color,button_color,button_font)
+    draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos,HEIGHT,button_hover_color,button_color,button_font)
+    draw_left_buttons(screen, mouse_pos,left_buttons,button_font)
+    return
+
+def afficher_banniere():
+    border_rect = pygame.Rect(
+            banner_border_w - border_thickness,
+            banner_border_h - border_thickness,
+            banniere.get_width() + (border_thickness * 2),
+            banniere.get_height() + (border_thickness * 2))
+    pygame.draw.rect(screen, (178, 180, 166), border_rect, border_thickness, border_radius=border_radius)
+    screen.blit(banniere, (banner_border_w, banner_border_h))
+    return
 
 def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90, current_banner_index=0):
     """
@@ -274,38 +170,6 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
         "new_pity_4_star": new_pity_4_star,
         "new_guaranteed_5_star": new_guaranteed_5_star
     }
-
-
-def draw_button(screen, rect, text, mouse_pos):
-    """Dessine bouton"""
-    if rect.collidepoint(mouse_pos):
-        color = button_hover_color
-    else:
-        color = button_color
-    
-    border_radius = int(HEIGHT * 30 / 900)
-    border_width = int(HEIGHT * 3 / 900)
-    
-    pygame.draw.rect(screen, color, rect, border_radius=border_radius)
-    pygame.draw.rect(screen, (180, 178, 178), rect, border_width, border_radius=border_radius) 
-    
-    button_text = button_font.render(text, True, (183, 167, 155))
-    text_rect = button_text.get_rect(center=rect.center)
-    screen.blit(button_text, text_rect)
-
-def weapon_background_path(weapon):
-    """
-    Donne le chemin de l'image de fond selon le type d'arme.
-    Args:
-        weapon (str): type d'arme ("sword", "claymore", "polearm", "bow", "catalyst")
-    """
-    return pygame.image.load(f"img/Weapon_Background/{weapon}.png").convert_alpha()
-
-def afficher_souris():
-    mouse_pos = pygame.mouse.get_pos()
-    cursor_x = mouse_pos[0] - cursor_img.get_width() // 2 
-    cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
-    screen.blit(cursor_img, (cursor_x, cursor_y))
 
 def ecran_multi(results, screen, border=5, ecart=int(5*10/multi)):
     """
@@ -570,31 +434,6 @@ def afficher_resultats(results, screen):
 
     return True, True
 
-def actualiser_text_pity():
-    pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
-    odd_5_star =(pity_5_star - soft_pity) * ((1 -(proba_effective_5_star)) / (hard_pity - soft_pity)) + (proba_effective_5_star) if pity_5_star > soft_pity else (proba_effective_5_star)
-    pity_text_2 = button_font.render(f"chance 5★: {min(odd_5_star*100, 100):.2f}%", True, (255, 215, 0))
-    pity_text_3 = button_font.render(f"5★ limité garanti: {guaranteed_5_star}", True, (255, 215, 0))
-    screen.blit(pity_text, (pity_x, pity_y))
-    screen.blit(pity_text_2, (pity_x, pity_y2))
-    screen.blit(pity_text_3, (pity_x, pity_y3))
-    return 
-
-def boutons():
-    draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos)
-    draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos)
-    draw_left_buttons(screen, mouse_pos,left_buttons,button_font)
-    return
-
-def afficher_banniere():
-    border_rect = pygame.Rect(
-            banner_border_w - border_thickness,
-            banner_border_h - border_thickness,
-            banniere.get_width() + (border_thickness * 2),
-            banniere.get_height() + (border_thickness * 2))
-    pygame.draw.rect(screen, (178, 180, 166), border_rect, border_thickness, border_radius=border_radius)
-    screen.blit(banniere, (banner_border_w, banner_border_h))
-    return
 
 # --- Boucle principale ---
 running = True
@@ -633,7 +472,7 @@ while running:
                 result = wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity, hard_pity, current_banner_index)
                 wish_rarete = result["rarete"]
                 wish_splash_art = result["splash_art"]
-                animation_progress = 0.0  # Reset animation
+                animation_progress = 0.0  
                 pity_5_star = result["new_pity_5_star"]
                 pity_4_star = result["new_pity_4_star"]
                 guaranteed_5_star = result["new_guaranteed_5_star"]
