@@ -1,5 +1,7 @@
 import pygame
-
+import random
+import cv2
+# --- Affichage ---
 def scale_to_height(image, target_height):
     w, h = image.get_size()
     scale_factor = target_height / h
@@ -56,6 +58,7 @@ def darken(rgb, coefficient=0.5):
         return tuple(int(i * coefficient) for i in rgb)
 
 def get_color(rare):
+
     """
     Couleur en fonctions de la rareté
 
@@ -67,3 +70,89 @@ def get_color(rare):
     if rare == "4_star":
         return (120, 60, 185)
     return (80, 140, 225)
+
+def play_video(video_path, screen, WIDTH, HEIGHT, loop=False):
+    """
+    Lit et affiche vidéo sur écran, compliqué et trouvé sur internet --> NE PAS TOUCHER
+    """
+    cap = cv2.VideoCapture(video_path)
+    
+    if not cap.isOpened():
+        print(f"Erreur: Impossible d'ouvrir la vidéo {video_path}")
+        return True 
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    if fps == 0 or fps > 120: 
+        fps = 30
+    
+    clock = pygame.time.Clock()
+    playing = True
+    frame_count = 0
+    while playing:
+        ret, frame = cap.read()
+        if not ret:
+            if loop:
+                cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                frame_count = 0
+                ret, frame = cap.read()
+                if not ret:
+                    break
+            else:
+                break
+        
+        frame_count += 1
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = cv2.resize(frame, (WIDTH, HEIGHT))
+        frame = frame.swapaxes(0, 1)
+        frame = pygame.surfarray.make_surface(frame)
+        
+        screen.fill((0, 0, 0))
+        screen.blit(frame, (0, 0))   
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                playing = False
+                cap.release()
+                return False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE:
+                    playing = False
+        
+        pygame.display.flip()
+        clock.tick(fps)
+
+    cap.release()
+    #print("Vidéo terminée")
+    return True
+
+# --- Calculs ---
+def rarete(pity_5, pity_4, proba_5=0.006, proba_4=0.051,chance=1.0,soft_pity=70, hard_pity=90):
+    """
+    Calcule la rareté d'un tirage sans modifier les compteurs de pity.
+    
+    Args:
+        pity_5_star (int): compteur actuel pity 5★
+        pity_4_star (int): compteur actuel pity 4★
+        proba_5 (float): probabilité d'avoir  un perso 5★
+        proba_4 (float): probabilité d'avoir  un perso 4★
+        chance (float): chance
+        soft_pity (int, optional): début de la soft pity pour 5★
+        hard_pity (int, optional): hard pity pour 5★
+
+    Returns:
+        str: "5_star", "4_star" ou "3_star" selon le tirage aléatoire pondéré.
+    """
+    weight_5_star = proba_5*chance
+    weight_4_star = proba_4*chance
+    if pity_5 >= hard_pity:
+        return "5_star"
+    if pity_4 >= 9:
+        return "4_star"
+    if pity_5 > soft_pity:
+        weight_5_star += (pity_5 - soft_pity) * ((1 - proba_5) / (hard_pity - soft_pity))
+
+    weight_5_star = min(weight_5_star, 1 - weight_4_star)
+    weight_3_star = 1 - weight_4_star - weight_5_star
+    tirage = random.choices(
+        ["5_star", "4_star", "3_star"],
+        [weight_5_star, weight_4_star, weight_3_star]
+        )[0]
+    return tirage

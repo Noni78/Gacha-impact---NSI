@@ -205,36 +205,6 @@ for i, char in enumerate(characters["5_star"]):
     left_buttons.append((rect, char["name"]))
 # --- Fonctions ---
 
-
-def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,weight_5_star=proba_effective_5_star,weight_4_star=proba_init_4_star*(chance_globale)):
-    """
-    Calcule la rareté d'un tirage sans modifier les compteurs de pity.
-    
-    Args:
-        pity_5_star (int): compteur actuel pity 5★
-        pity_4_star (int): compteur actuel pity 4★
-        soft_pity (int, optional): début de la soft pity pour 5★. Défaut 70
-        hard_pity (int, optional): hard pity pour 5★. Défaut 90
-
-    Returns:
-        str: "5_star", "4_star" ou "3_star" selon le tirage aléatoire pondéré.
-    """
-
-    if pity_5_star >= hard_pity:
-        return "5_star"
-    if pity_4_star >= 9:
-        return "4_star"
-    if pity_5_star > soft_pity:
-        weight_5_star += (pity_5_star - soft_pity) * ((1 - proba_init_5_star) / (hard_pity - soft_pity))
-
-    weight_5_star = min(weight_5_star, 1 - weight_4_star)
-    weight_3_star = 1 - weight_4_star - weight_5_star
-    tirage = random.choices(
-        ["5_star", "4_star", "3_star"],
-        [weight_5_star, weight_4_star, weight_3_star]
-        )[0]
-    return tirage
-
 def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90, current_banner_index=0):
     """
     Effectue 1 voeu et retourne tous les résultats.
@@ -257,7 +227,7 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
             "new_guaranteed_5_star": bool  # nouveau statut guaranteed
         }
     """
-    wish_rarete = rarete(pity_5_star, pity_4_star, soft_pity, hard_pity)
+    wish_rarete = rarete(pity_5_star, pity_4_star,proba_init_5_star,proba_init_4_star,chance_globale ,soft_pity, hard_pity)
     new_pity_5_star = pity_5_star
     new_pity_4_star = pity_4_star
     new_guaranteed_5_star = guaranteed_5_star
@@ -305,59 +275,6 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90
         "new_guaranteed_5_star": new_guaranteed_5_star
     }
 
-def play_video(video_path, screen, loop=False):
-    """
-    Lit et affiche vidéo sur écran, compliqué et trouvé sur internet --> NE PAS TOUCHER
-    """
-    cap = cv2.VideoCapture(video_path)
-    
-    if not cap.isOpened():
-        print(f"Erreur: Impossible d'ouvrir la vidéo {video_path}")
-        return True 
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    if fps == 0 or fps > 120: 
-        fps = 30
-    
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    
-    clock = pygame.time.Clock()
-    playing = True
-    frame_count = 0
-    while playing:
-        ret, frame = cap.read()
-        if not ret:
-            if loop:
-                cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-                frame_count = 0
-                ret, frame = cap.read()
-                if not ret:
-                    break
-            else:
-                break
-        
-        frame_count += 1
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        frame = cv2.resize(frame, (WIDTH, HEIGHT))
-        frame = frame.swapaxes(0, 1)
-        frame = pygame.surfarray.make_surface(frame)
-        
-        screen.fill((0, 0, 0))
-        screen.blit(frame, (0, 0))   
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                playing = False
-                cap.release()
-                return False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE:
-                    playing = False
-        
-        pygame.display.flip()
-        clock.tick(fps)
-
-    cap.release()
-    print("Vidéo terminée")
-    return True
 
 def draw_button(screen, rect, text, mouse_pos):
     """Dessine bouton"""
@@ -383,9 +300,6 @@ def weapon_background_path(weapon):
         weapon (str): type d'arme ("sword", "claymore", "polearm", "bow", "catalyst")
     """
     return pygame.image.load(f"img/Weapon_Background/{weapon}.png").convert_alpha()
-
-
-
 
 def afficher_souris():
     mouse_pos = pygame.mouse.get_pos()
@@ -723,7 +637,7 @@ while running:
                 pity_5_star = result["new_pity_5_star"]
                 pity_4_star = result["new_pity_4_star"]
                 guaranteed_5_star = result["new_guaranteed_5_star"]
-                if not play_video(result["animation"], screen, loop=False):
+                if not play_video(result["animation"],screen, WIDTH,HEIGHT,loop=False):
                     running = False
 
             elif button_multi_rect.collidepoint(event.pos):
@@ -737,7 +651,7 @@ while running:
 
                 rarete_priority = {"5_star":1,"5_star_perma":2,"4_star":3,"3_star":4}   
                 best_result = min(results, key=lambda x: rarete_priority[x["rarete"]])
-                if not play_video(best_result["animation"], screen, loop=False):
+                if not play_video(best_result["animation"], screen,WIDTH,HEIGHT, loop=False):
                     running = False
                 continue_running, reset_to_banniere = afficher_resultats(results, screen)
                 if not continue_running:
