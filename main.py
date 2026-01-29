@@ -11,41 +11,20 @@ font_size = int(HEIGHT * 40 / 900)
 font = pygame.font.Font("font/genshin.ttf", font_size)
 button_font_size = int(HEIGHT * 30 / 900)
 button_font = pygame.font.Font("font/genshin.ttf", button_font_size)
+
 background = scale_to_height(pygame.image.load("img/background.png").convert_alpha(), HEIGHT)
 background_wishing = scale_to_height(pygame.image.load("img/background_wishing.png").convert_alpha(), HEIGHT)
 # --- Initialisation Bannière ---
 current_banner_index = random.randint(0,7) # l'index correspond aux 5 étoiles non perma dans l'ordre ou ils sont dans le dictionnaire character, ici c'est aléatoire
 banniere_path = characters["5_star"][current_banner_index]["banniere"]
 banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)
-# --- Initialisation Boutons Voeux ---
-button_height = int(HEIGHT * 60 / 900)
-button_width = int(HEIGHT * 200 / 900)
-button_spacing = int(HEIGHT * 20 / 900)
-button_bottom_margin = int(HEIGHT * 80 / 900)
-button_x1_rect = pygame.Rect(WIDTH//2 - button_width - button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
-button_multi_rect = pygame.Rect(WIDTH//2 + button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
-button_color = (255, 255, 230)
-button_hover_color = (200, 200, 170)
-# --- Initialisation Boutons gauche pour choix bannière ---
-left_button_width = int(HEIGHT * 200 / 900)
-left_button_height = int(HEIGHT * 50 / 900)
-left_button_spacing = int(HEIGHT * 20 / 900)
-left_buttons = []
-for i, char in enumerate(characters["5_star"]):
-    rect = pygame.Rect(
-        left_button_spacing,
-        left_button_spacing + HEIGHT*65/500 + i * (left_button_height + left_button_spacing),
-        left_button_width,
-        left_button_height
-    )
-    left_buttons.append((rect, char["name"]))
-# --- Fonctions ---
 
-def afficher_souris():
-    mouse_pos = pygame.mouse.get_pos()
-    cursor_x = mouse_pos[0] - cursor_img.get_width() // 2 
-    cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
-    screen.blit(cursor_img, (cursor_x, cursor_y))
+# --- Fonctions ---
+def boutons():
+    draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos,button_hover_color,button_color,button_font)
+    draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos,button_hover_color,button_color,button_font)
+    draw_banniere_buttons(screen, mouse_pos,banniere_buttons,button_font)
+    return
 
 def actualiser_text_pity():
     pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
@@ -56,12 +35,6 @@ def actualiser_text_pity():
     screen.blit(pity_text_2, (pity_x, pity_y2))
     screen.blit(pity_text_3, (pity_x, pity_y3))
     return 
-
-def boutons():
-    draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos,HEIGHT,button_hover_color,button_color,button_font)
-    draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos,HEIGHT,button_hover_color,button_color,button_font)
-    draw_left_buttons(screen, mouse_pos,left_buttons,button_font)
-    return
 
 def afficher_banniere():
     border_rect = pygame.Rect(
@@ -213,7 +186,7 @@ def ecran_multi(results, screen, border=5, ecart=int(5*10/multi)):
 
     return True
 
-def afficher_resultats(results, screen): 
+def afficher_resultats(results, screen,type): 
     """
     Affiche les résultats un par un puis écran multi final
     """
@@ -233,7 +206,10 @@ def afficher_resultats(results, screen):
             (WIDTH//2 - background_wishing.get_width()//2,
             HEIGHT//2 - background_wishing.get_height()//2)
         )
-        current_result = results[current_index]
+        if type == "multi":
+            current_result = results[current_index]
+        else:
+            current_result = results
 
         if current_result["character"]["type"] is not None:
             weapon_BG = scale_to_height(
@@ -256,18 +232,18 @@ def afficher_resultats(results, screen):
 
         if animation_progress < 1.0:
             animation_progress += 0.08  
+        if type == "multi":
+            counter_text = font.render(
+                f"{current_index + 1}/{len(results)}",
+                True,
+                (255, 255, 255)
+            )
 
-        counter_text = font.render(
-            f"{current_index + 1}/{len(results)}",
-            True,
-            (255, 255, 255)
-        )
-
-        screen.blit(
-            counter_text,
-            (WIDTH//2 - counter_text.get_width()//2,
-            counter_y)
-        )
+            screen.blit(
+                counter_text,
+                (WIDTH//2 - counter_text.get_width()//2,
+                counter_y)
+            )
 
         char_name = button_font.render(
             current_result["character"]["name"],
@@ -297,36 +273,44 @@ def afficher_resultats(results, screen):
             if event.type == pygame.QUIT:
                 return False, False
             if event.type == pygame.KEYDOWN:
-                if event.key in [pygame.K_SPACE, pygame.K_RIGHT]:
-                    current_index += 1
-                    animation_progress = 0.0 
-                    if current_index >= len(results):
+                if type == "multi":
+                    if event.key in [pygame.K_SPACE, pygame.K_RIGHT]:  
+                        current_index += 1
+                        animation_progress = 0.0 
+                        if current_index >= len(results):
+                            ok = ecran_multi(results, screen)
+                            if not ok:
+                                return False, False
+
+                            return True, True
+                        
+                    elif event.key == pygame.K_LEFT and current_index > 0:
+                        current_index -= 1
+                        animation_progress = 0.0
+                    elif event.key == pygame.K_ESCAPE:
                         ok = ecran_multi(results, screen)
                         if not ok:
                             return False, False
-
                         return True, True
-                    
-                elif event.key == pygame.K_LEFT and current_index > 0:
-                    current_index -= 1
-                    animation_progress = 0.0
-                elif event.key == pygame.K_ESCAPE:
-                    ok = ecran_multi(results, screen)
-                    if not ok:
-                        return False, False
-
-                    return True, True
+                else:
+                    if event.key in [pygame.K_SPACE, pygame.K_RIGHT]: 
+                        animation_progress = 0.0
+                        return True, True
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
-                    current_index += 1
-                    animation_progress = 0.0  
-                    if current_index >= len(results):
-                        ok = ecran_multi(results, screen)
-                        if not ok:
-                            return False, False
+                    if type == "multi":
+                        current_index += 1
+                        animation_progress = 0.0  
+                        if current_index >= len(results):
+                            ok = ecran_multi(results, screen)
+                            if not ok:
+                                return False, False
 
-                        return True, True
+                            return True, True
+                    else:
+                        animation_progress = 0.0
+                        return True,True
 
 
         pygame.display.flip()
@@ -378,6 +362,13 @@ while running:
                 guaranteed_5_star = result["new_guaranteed_5_star"]
                 if not play_video(result["animation"], screen, loop=False):
                     running = False
+                continue_running, reset_to_banniere = afficher_resultats(result, screen, type= "single")
+                if not continue_running:
+                    running = False
+                if reset_to_banniere:
+                    wish_rarete = None
+                    wish_splash_art = None
+                    animation_progress = 0.0  
 
             elif button_multi_rect.collidepoint(event.pos):
                 results = []
@@ -392,7 +383,7 @@ while running:
                 best_result = min(results, key=lambda x: rarete_priority[x["rarete"]])
                 if not play_video(best_result["animation"], screen, loop=False):
                     running = False
-                continue_running, reset_to_banniere = afficher_resultats(results, screen)
+                continue_running, reset_to_banniere = afficher_resultats(results, screen,type = "multi")
                 if not continue_running:
                     running = False
                 if reset_to_banniere:
@@ -405,7 +396,7 @@ while running:
                 wish_splash_art = None
                 animation_progress = 0.0
             else:
-                for i, (rect, name) in enumerate(left_buttons):
+                for i, (rect, name) in enumerate(banniere_buttons):
                     if rect.collidepoint(event.pos):
                         current_banner_index = i
                         banniere_path = characters["5_star"][current_banner_index]["banniere"]

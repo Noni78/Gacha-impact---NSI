@@ -18,8 +18,8 @@ def scale_with_borders(image, target_width, target_height, border_percent=15):
     new_height = target_height - (2 * border_h)
     return pygame.transform.scale(image, (new_width, new_height)), border_w, border_h
 
-def draw_left_buttons(screen, mouse_pos, left_buttons,button_font):
-    for rect, name in left_buttons:
+def draw_banniere_buttons(screen, mouse_pos, banniere_buttons,button_font):
+    for rect, name in banniere_buttons:
         color = (140, 140, 110) if rect.collidepoint(mouse_pos) else (178, 180, 140)
         pygame.draw.rect(screen, color, rect, border_radius=5)
         text_surf = button_font.render(name, True, (78, 80, 40))
@@ -133,7 +133,7 @@ def weapon_background_path(weapon):
     """
     return pygame.image.load(f"img/Weapon_Background/{weapon}.png").convert_alpha()
 
-def draw_button(screen, rect, text, mouse_pos,HEIGHT,hover_color,color,font):
+def draw_button(screen, rect, text, mouse_pos,hover_color,color,font):
     """Dessine bouton"""
     if rect.collidepoint(mouse_pos):
         color = hover_color
@@ -149,6 +149,12 @@ def draw_button(screen, rect, text, mouse_pos,HEIGHT,hover_color,color,font):
     text = font.render(text, True, (183, 167, 155))
     text_rect = text.get_rect(center=rect.center)
     screen.blit(text, text_rect)
+
+def afficher_souris():
+    mouse_pos = pygame.mouse.get_pos()
+    cursor_x = mouse_pos[0] - cursor_img.get_width() // 2 
+    cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
+    screen.blit(cursor_img, (cursor_x, cursor_y))
 # --- Calculs ---
 def rarete(pity_5, pity_4, proba_5=0.006, proba_4=0.051,chance=1.0,soft_pity=70, hard_pity=90):
     """
