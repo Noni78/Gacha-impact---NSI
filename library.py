@@ -3,6 +3,7 @@ import random
 import cv2
 from character import *
 from settings import *
+pygame.init()
 # --- Affichage ---
 def scale_to_height(image, target_height):
     w, h = image.get_size()
@@ -134,9 +135,19 @@ def weapon_background_path(weapon):
     return pygame.image.load(f"img/Weapon_Background/{weapon}.png").convert_alpha()
 
 def draw_button(screen, rect, text, mouse_pos,hover_color,color,font):
-    """Dessine bouton"""
+    """Dessine bouton
+    
+    args :
+    screen : surface pygame
+    rect: rectangle (dimension etc)
+    text (float): texte sur le bouton
+    mous_pos: positions de la souris
+    hover_color: couleur quans souris sur bouton
+    color: couleur de base en RGB
+    """
     if rect.collidepoint(mouse_pos):
         color = hover_color
+        print(hover_color)
     else:
         color = color
     

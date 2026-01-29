@@ -1,5 +1,6 @@
 import pygame
 from character import *
+pygame.init()
 # ---pity---
 pity_5_star = 70
 pity_4_star = 0
@@ -54,3 +55,16 @@ for i, char in enumerate(characters["5_star"]):
         banniere_button_height
     )
     banniere_buttons.append((rect, char["name"]))
+# --- Miscellaenous --- 
+font_size = int(HEIGHT * 40 / 900)  
+font = pygame.font.Font("font/genshin.ttf", font_size)
+button_font_size = int(HEIGHT * 30 / 900)
+button_font = pygame.font.Font("font/genshin.ttf", button_font_size)
+clock = pygame.time.Clock()
+delta_time = 0.1
+pity_y = int(HEIGHT * 10 / 900)
+pity_y2 = int(HEIGHT * 50 / 900)
+pity_y3 = int(HEIGHT * 90 / 900)
+pity_x = int(HEIGHT * 20 / 900)
+border_thickness = int(HEIGHT * 5 / 900)
+border_radius = int(HEIGHT * 10 / 900)

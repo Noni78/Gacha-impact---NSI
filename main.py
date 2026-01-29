@@ -7,25 +7,13 @@ from settings import *
 
 # --- Initalisation ---
 pygame.init()
-font_size = int(HEIGHT * 40 / 900)  
-font = pygame.font.Font("font/genshin.ttf", font_size)
-button_font_size = int(HEIGHT * 30 / 900)
-button_font = pygame.font.Font("font/genshin.ttf", button_font_size)
-
 background = scale_to_height(pygame.image.load("img/background.png").convert_alpha(), HEIGHT)
 background_wishing = scale_to_height(pygame.image.load("img/background_wishing.png").convert_alpha(), HEIGHT)
-# --- Initialisation Bannière ---
 current_banner_index = random.randint(0,7) # l'index correspond aux 5 étoiles non perma dans l'ordre ou ils sont dans le dictionnaire character, ici c'est aléatoire
 banniere_path = characters["5_star"][current_banner_index]["banniere"]
 banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)
 
 # --- Fonctions ---
-def boutons():
-    draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos,button_hover_color,button_color,button_font)
-    draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos,button_hover_color,button_color,button_font)
-    draw_banniere_buttons(screen, mouse_pos,banniere_buttons,button_font)
-    return
-
 def actualiser_text_pity():
     pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
     odd_5_star =(pity_5_star - soft_pity) * ((1 -(proba_effective_5_star)) / (hard_pity - soft_pity)) + (proba_effective_5_star) if pity_5_star > soft_pity else (proba_effective_5_star)
@@ -194,7 +182,6 @@ def afficher_resultats(results, screen,type):
     showing_results = True
     clock = pygame.time.Clock()
     animation_progress = 0.0  
-    counter_y = int(HEIGHT * 50 / 900)
     name_y = int(HEIGHT * 100 / 900)
     instruction_y = int(HEIGHT * 50 / 900)
 
@@ -233,6 +220,7 @@ def afficher_resultats(results, screen,type):
         if animation_progress < 1.0:
             animation_progress += 0.08  
         if type == "multi":
+            counter_y = int(HEIGHT * 50 / 900)
             counter_text = font.render(
                 f"{current_index + 1}/{len(results)}",
                 True,
@@ -293,7 +281,7 @@ def afficher_resultats(results, screen,type):
                             return False, False
                         return True, True
                 else:
-                    if event.key in [pygame.K_SPACE, pygame.K_RIGHT]: 
+                    if event.key in [pygame.K_SPACE, pygame.K_RIGHT,pygame.K_ESCAPE]: 
                         animation_progress = 0.0
                         return True, True
 
@@ -318,17 +306,15 @@ def afficher_resultats(results, screen,type):
 
     return True, True
 
+def boutons():
+    draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos,button_hover_color,button_color,button_font)
+    draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos,button_hover_color,button_color,button_font)
+    draw_banniere_buttons(screen, mouse_pos,banniere_buttons,button_font)
+    return
 
 # --- Boucle principale ---
 running = True
-clock = pygame.time.Clock()
-delta_time = 0.1
-pity_y = int(HEIGHT * 10 / 900)
-pity_y2 = int(HEIGHT * 50 / 900)
-pity_y3 = int(HEIGHT * 90 / 900)
-pity_x = int(HEIGHT * 20 / 900)
-border_thickness = int(HEIGHT * 5 / 900)
-border_radius = int(HEIGHT * 10 / 900)
+
 while running:
     mouse_pos = pygame.mouse.get_pos()
     # --- Affichage background et banniere---
