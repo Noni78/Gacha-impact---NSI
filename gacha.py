@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 import cv2
+from library import *
 
 # --- Paramètres Voeu ---
 pity_5_star = 70
@@ -153,7 +154,7 @@ characters = {
 
 # --- Initalisation ---
 pygame.init()
-HEIGHT = 660 #   <------------------------------------------------------------------------------ ici height
+HEIGHT = 300 #   <------------------------------------------------------------------------------ ici height
 WIDTH = int(HEIGHT*16/9)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Totally not a Genshin Impact wishing replica")
@@ -173,20 +174,6 @@ except:
 wish_rarete = None
 wish_splash_art = None
 animation_progress = 0.0 
-
-def scale_to_height(image, target_height):
-    w, h = image.get_size()
-    scale_factor = target_height / h
-    new_w = int(w * scale_factor)
-    new_h = target_height
-    return pygame.transform.scale(image, (new_w, new_h))
-
-def scale_with_borders(image, target_width, target_height, border_percent=15):
-    border_w = int(target_width * border_percent / 100)
-    border_h = int(target_height * border_percent / 100)
-    new_width = target_width - (2 * border_w)
-    new_height = target_height - (2 * border_h)
-    return pygame.transform.scale(image, (new_width, new_height)), border_w, border_h
 
 background = scale_to_height(pygame.image.load("img/background.png").convert_alpha(), HEIGHT)
 background_wishing = scale_to_height(pygame.image.load("img/background_wishing.png").convert_alpha(), HEIGHT)
@@ -217,35 +204,7 @@ for i, char in enumerate(characters["5_star"]):
     )
     left_buttons.append((rect, char["name"]))
 # --- Fonctions ---
-def draw_left_buttons(screen, mouse_pos):
-    for rect, name in left_buttons:
-        color = (140, 140, 110) if rect.collidepoint(mouse_pos) else (178, 180, 140)
-        pygame.draw.rect(screen, color, rect, border_radius=5)
-        text_surf = button_font.render(name, True, (78, 80, 40))
-        text_rect = text_surf.get_rect(center=rect.center)
-        screen.blit(text_surf, text_rect)
 
-def animer_splash_art(screen, splash_art, progress=1.0):
-    """
-    'anime' le splash art
-    
-    Args:
-        screen: surface pygame
-        splash_art: image du personnage
-        progress (float): progression de l'animation de 0 à 1
-    """
-    scale_factor = 2 - (0.6 * min(progress, 1))
-    
-    new_width = int(splash_art.get_width() * scale_factor)
-    new_height = int(splash_art.get_height() * scale_factor)
-    scaled_splash = pygame.transform.scale(splash_art, (new_width, new_height))
-    
-    x = WIDTH // 2 - scaled_splash.get_width() // 2
-    y = HEIGHT // 2 - scaled_splash.get_height() // 2
-    
-    alpha = int(255 * min(progress, 1))
-    scaled_splash.set_alpha(alpha)
-    screen.blit(scaled_splash, (x, y))
 
 def rarete(pity_5_star, pity_4_star, soft_pity=70, hard_pity=90,weight_5_star=proba_effective_5_star,weight_4_star=proba_init_4_star*(chance_globale)):
     """
@@ -425,21 +384,8 @@ def weapon_background_path(weapon):
     """
     return pygame.image.load(f"img/Weapon_Background/{weapon}.png").convert_alpha()
 
-def darken(rgb, coefficient=0.5):
-        """
-        Assombrit une couleur
 
-        Args:
-            rgb (tuple): couleur à assombrir
-        """
-        return tuple(int(i * coefficient) for i in rgb)
 
-def get_color(rare:str):
-        if rare in ["5_star", "5_star_perma"]:
-            return (220, 190, 20)
-        if rare == "4_star":
-            return (120, 60, 185)
-        return (80, 140, 225)
 
 def afficher_souris():
     mouse_pos = pygame.mouse.get_pos()
@@ -614,7 +560,7 @@ def afficher_resultats(results, screen):
                 weapon_background_path(
                     current_result["character"]["type"]
                 ),
-                HEIGHT//2.5
+                HEIGHT
             )
             screen.blit(
                 weapon_BG,
@@ -625,6 +571,8 @@ def afficher_resultats(results, screen):
         animer_splash_art(
             screen,
             current_result["splash_art"],
+            WIDTH,
+            HEIGHT,
             animation_progress
         )
 
@@ -721,7 +669,7 @@ def actualiser_text_pity():
 def boutons():
     draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos)
     draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos)
-    draw_left_buttons(screen, mouse_pos)
+    draw_left_buttons(screen, mouse_pos,left_buttons,button_font)
     return
 
 def afficher_banniere():
@@ -753,7 +701,7 @@ while running:
         afficher_banniere()
     else:
         screen.blit(background_wishing, (WIDTH//2 - background_wishing.get_width()//2, HEIGHT//2 - background_wishing.get_height()//2))
-        animer_splash_art(screen, wish_splash_art, animation_progress)
+        animer_splash_art(screen, wish_splash_art, WIDTH,HEIGHT,animation_progress)
         
         if animation_progress < 1.0:
             animation_progress += 0.1
