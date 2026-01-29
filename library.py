@@ -1,6 +1,8 @@
 import pygame
 import random
 import cv2
+from character import *
+from settings import *
 # --- Affichage ---
 def scale_to_height(image, target_height):
     w, h = image.get_size()
@@ -180,3 +182,73 @@ def rarete(pity_5, pity_4, proba_5=0.006, proba_4=0.051,chance=1.0,soft_pity=70,
         [weight_5_star, weight_4_star, weight_3_star]
         )[0]
     return tirage
+
+def wish(pity_5_star, pity_4_star, guaranteed_5_star,current_banner_index, soft_pity=73, hard_pity=90, ):
+    """
+    Effectue 1 voeu et retourne tous les résultats.
+    
+    Args:
+        pity_5_star,pity_4_star (int): compteur actuel pity 5★ et 4★
+        guaranteed_5_star (bool): True si le prochain 5★ est garanti 
+        soft_pity (int, optional): soft pity 5★
+        hard_pity (int, optional): hard pity 5★ 
+        current_banner_index (int): index de la bannière actuelle
+    
+    Returns:
+        dict: {
+            "rarete": str,  # "5_star", "5_star_perma", "4_star" ou "3_star"
+            "character": dict,  # le personnage obtenu
+            "animation": str,  # chemin d'animaton de voeu
+            "splash_art": pygame.Surface,  #image du personnage
+            "new_pity_5_star": int,  # nouvelle pity 5★
+            "new_pity_4_star": int,  # nouvelle pity 4★
+            "new_guaranteed_5_star": bool  # nouveau statut guaranteed
+        }
+    """
+    wish_rarete = rarete(pity_5_star, pity_4_star,proba_init_5_star,proba_init_4_star,chance_globale ,soft_pity, hard_pity)
+    new_pity_5_star = pity_5_star
+    new_pity_4_star = pity_4_star
+    new_guaranteed_5_star = guaranteed_5_star
+    
+    if wish_rarete == "5_star":
+        new_pity_5_star = 0
+        new_pity_4_star += 1
+        wish_animation = "videos/pull_5_star.mp4"
+    elif wish_rarete == "4_star":
+        wish_animation = "videos/pull_4_star.mp4"
+        new_pity_4_star = 0
+        new_pity_5_star += 1
+    else:
+        wish_animation = "videos/pull_3_star.mp4"
+        new_pity_5_star += 1
+        new_pity_4_star += 1
+
+    if wish_rarete == "5_star":
+        if not guaranteed_5_star and random.random() < 0.5:
+            new_guaranteed_5_star = True
+            wish_rarete = "5_star_perma"
+        else:
+            new_guaranteed_5_star = False
+    if wish_rarete == "4_star":
+        featured_4_stars = characters["5_star"][current_banner_index].get("featured_4_star", [])
+        if featured_4_stars and random.random() < 0.8:  
+            featured_chars = [c for c in characters["4_star"] if c["name"] in featured_4_stars]
+            wish_result_character = random.choice(featured_chars)
+        else:
+            non_featured_chars = [c for c in characters["4_star"] if c["name"] not in featured_4_stars]
+            wish_result_character = random.choice(non_featured_chars) if non_featured_chars else random.choice(characters["4_star"])
+    elif wish_rarete == "5_star":
+        wish_result_character = characters["5_star"][current_banner_index]
+    else:
+        wish_result_character = random.choice(characters[wish_rarete])
+    
+    wish_splash_art = scale_to_height(pygame.image.load(wish_result_character["image"]).convert_alpha(), HEIGHT)
+    return {
+        "rarete": wish_rarete,
+        "character": wish_result_character,
+        "animation": wish_animation,
+        "splash_art": wish_splash_art,
+        "new_pity_5_star": new_pity_5_star,
+        "new_pity_4_star": new_pity_4_star,
+        "new_guaranteed_5_star": new_guaranteed_5_star
+    }

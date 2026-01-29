@@ -1,51 +1,23 @@
 import pygame
 import sys
 import random
-import cv2
 from library import *
 from character import *
-# --- Paramètres Voeu ---
-pity_5_star = 70
-pity_4_star = 0
-soft_pity = 73
-hard_pity = 90
-guaranteed_5_star = False
-multi = 10  # Petit conseil ne pas mettre au dessus de 100, et pas en dessous de 5 sinon c'est pas beau
-chance_globale = 100/100 # défaut : 100%
-proba_init_5_star = 0.006
-proba_init_4_star = 0.051
-proba_effective_5_star = proba_init_5_star*chance_globale
+from settings import *
 
 # --- Initalisation ---
 pygame.init()
-HEIGHT = 300 #   <------------------------------------------------------------------------------ ici height
-WIDTH = int(HEIGHT*16/9)
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Totally not a Genshin Impact wishing replica")
-pygame.display.set_icon(pygame.image.load("img/icon.png").convert_alpha())
 font_size = int(HEIGHT * 40 / 900)  
 font = pygame.font.Font("font/genshin.ttf", font_size)
 button_font_size = int(HEIGHT * 30 / 900)
 button_font = pygame.font.Font("font/genshin.ttf", button_font_size)
-try:
-    cursor_img = pygame.image.load("img/Cursor.png").convert_alpha()
-    cursor_size = int(HEIGHT * 32 / 900)
-    cursor_img = pygame.transform.scale(cursor_img, (cursor_size, cursor_size))
-    pygame.mouse.set_visible(False)
-    use_custom_cursor = True
-except:
-    use_custom_cursor = False
-wish_rarete = None
-wish_splash_art = None
-animation_progress = 0.0 
-
 background = scale_to_height(pygame.image.load("img/background.png").convert_alpha(), HEIGHT)
 background_wishing = scale_to_height(pygame.image.load("img/background_wishing.png").convert_alpha(), HEIGHT)
-# --- Initialisation bannière ---
+# --- Initialisation Bannière ---
 current_banner_index = random.randint(0,7) # l'index correspond aux 5 étoiles non perma dans l'ordre ou ils sont dans le dictionnaire character, ici c'est aléatoire
 banniere_path = characters["5_star"][current_banner_index]["banniere"]
 banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)
-# --- Boutons Voeux ---
+# --- Initialisation Boutons Voeux ---
 button_height = int(HEIGHT * 60 / 900)
 button_width = int(HEIGHT * 200 / 900)
 button_spacing = int(HEIGHT * 20 / 900)
@@ -54,7 +26,7 @@ button_x1_rect = pygame.Rect(WIDTH//2 - button_width - button_spacing//2, HEIGHT
 button_multi_rect = pygame.Rect(WIDTH//2 + button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
 button_color = (255, 255, 230)
 button_hover_color = (200, 200, 170)
-# --- Boutons gauche pour choix bannière ---
+# --- Initialisation Boutons gauche pour choix bannière ---
 left_button_width = int(HEIGHT * 200 / 900)
 left_button_height = int(HEIGHT * 50 / 900)
 left_button_spacing = int(HEIGHT * 20 / 900)
@@ -100,76 +72,6 @@ def afficher_banniere():
     pygame.draw.rect(screen, (178, 180, 166), border_rect, border_thickness, border_radius=border_radius)
     screen.blit(banniere, (banner_border_w, banner_border_h))
     return
-
-def wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity=70, hard_pity=90, current_banner_index=0):
-    """
-    Effectue 1 voeu et retourne tous les résultats.
-    
-    Args:
-        pity_5_star,pity_4_star (int): compteur actuel pity 5★ et 4★
-        guaranteed_5_star (bool): True si le prochain 5★ est garanti 
-        soft_pity (int, optional): soft pity 5★. Défaut 70
-        hard_pity (int, optional): hard pity 5★. Défaut 90
-        current_banner_index (int): index de la bannière actuelle
-    
-    Returns:
-        dict: {
-            "rarete": str,  # "5_star", "5_star_perma", "4_star" ou "3_star"
-            "character": dict,  # le personnage obtenu
-            "animation": str,  # chemin d'animaton de voeu
-            "splash_art": pygame.Surface,  #image du personnage
-            "new_pity_5_star": int,  # nouvelle pity 5★
-            "new_pity_4_star": int,  # nouvelle pity 4★
-            "new_guaranteed_5_star": bool  # nouveau statut guaranteed
-        }
-    """
-    wish_rarete = rarete(pity_5_star, pity_4_star,proba_init_5_star,proba_init_4_star,chance_globale ,soft_pity, hard_pity)
-    new_pity_5_star = pity_5_star
-    new_pity_4_star = pity_4_star
-    new_guaranteed_5_star = guaranteed_5_star
-    
-    if wish_rarete == "5_star":
-        new_pity_5_star = 0
-        new_pity_4_star += 1
-        wish_animation = "videos/pull_5_star.mp4"
-    elif wish_rarete == "4_star":
-        wish_animation = "videos/pull_4_star.mp4"
-        new_pity_4_star = 0
-        new_pity_5_star += 1
-    else:
-        wish_animation = "videos/pull_3_star.mp4"
-        new_pity_5_star += 1
-        new_pity_4_star += 1
-
-    if wish_rarete == "5_star":
-        if not guaranteed_5_star and random.random() < 0.5:
-            new_guaranteed_5_star = True
-            wish_rarete = "5_star_perma"
-        else:
-            new_guaranteed_5_star = False
-    if wish_rarete == "4_star":
-        featured_4_stars = characters["5_star"][current_banner_index].get("featured_4_star", [])
-        if featured_4_stars and random.random() < 0.8:  
-            featured_chars = [c for c in characters["4_star"] if c["name"] in featured_4_stars]
-            wish_result_character = random.choice(featured_chars)
-        else:
-            non_featured_chars = [c for c in characters["4_star"] if c["name"] not in featured_4_stars]
-            wish_result_character = random.choice(non_featured_chars) if non_featured_chars else random.choice(characters["4_star"])
-    elif wish_rarete == "5_star":
-        wish_result_character = characters["5_star"][current_banner_index]
-    else:
-        wish_result_character = random.choice(characters[wish_rarete])
-    
-    wish_splash_art = scale_to_height(pygame.image.load(wish_result_character["image"]).convert_alpha(), HEIGHT)
-    return {
-        "rarete": wish_rarete,
-        "character": wish_result_character,
-        "animation": wish_animation,
-        "splash_art": wish_splash_art,
-        "new_pity_5_star": new_pity_5_star,
-        "new_pity_4_star": new_pity_4_star,
-        "new_guaranteed_5_star": new_guaranteed_5_star
-    }
 
 def ecran_multi(results, screen, border=5, ecart=int(5*10/multi)):
     """
@@ -469,7 +371,7 @@ while running:
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if button_x1_rect.collidepoint(event.pos):
-                result = wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity, hard_pity, current_banner_index)
+                result = wish(pity_5_star, pity_4_star, guaranteed_5_star, current_banner_index, soft_pity, hard_pity)
                 wish_rarete = result["rarete"]
                 wish_splash_art = result["splash_art"]
                 animation_progress = 0.0  
@@ -482,7 +384,7 @@ while running:
             elif button_multi_rect.collidepoint(event.pos):
                 results = []
                 for _ in range(multi):
-                    result = wish(pity_5_star, pity_4_star, guaranteed_5_star, soft_pity, hard_pity, current_banner_index)
+                    result = wish(pity_5_star, pity_4_star, guaranteed_5_star, current_banner_index, soft_pity, hard_pity)
                     results.append(result)
                     pity_5_star = result["new_pity_5_star"]
                     pity_4_star = result["new_pity_4_star"]
