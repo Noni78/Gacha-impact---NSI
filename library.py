@@ -26,7 +26,7 @@ def draw_left_buttons(screen, mouse_pos, left_buttons,button_font):
         text_rect = text_surf.get_rect(center=rect.center)
         screen.blit(text_surf, text_rect)
 
-def animer_splash_art(screen, splash_art, WIDTH, HEIGHT,progress=1.0):
+def animer_splash_art(screen, splash_art,progress=1.0):
     """
     'anime' le splash art
     
@@ -73,7 +73,7 @@ def get_color(rare):
         return (120, 60, 185)
     return (80, 140, 225)
 
-def play_video(video_path, screen, WIDTH, HEIGHT, loop=False):
+def play_video(video_path, screen,loop=False):
     """
     Lit et affiche vidéo sur écran, compliqué et trouvé sur internet --> NE PAS TOUCHER
     """

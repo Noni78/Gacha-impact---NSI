@@ -251,8 +251,6 @@ def afficher_resultats(results, screen):
         animer_splash_art(
             screen,
             current_result["splash_art"],
-            WIDTH,
-            HEIGHT,
             animation_progress
         )
 
@@ -356,7 +354,7 @@ while running:
         afficher_banniere()
     else:
         screen.blit(background_wishing, (WIDTH//2 - background_wishing.get_width()//2, HEIGHT//2 - background_wishing.get_height()//2))
-        animer_splash_art(screen, wish_splash_art, WIDTH,HEIGHT,animation_progress)
+        animer_splash_art(screen, wish_splash_art,animation_progress)
         
         if animation_progress < 1.0:
             animation_progress += 0.1
@@ -378,7 +376,7 @@ while running:
                 pity_5_star = result["new_pity_5_star"]
                 pity_4_star = result["new_pity_4_star"]
                 guaranteed_5_star = result["new_guaranteed_5_star"]
-                if not play_video(result["animation"],screen, WIDTH,HEIGHT,loop=False):
+                if not play_video(result["animation"], screen, loop=False):
                     running = False
 
             elif button_multi_rect.collidepoint(event.pos):
@@ -392,7 +390,7 @@ while running:
 
                 rarete_priority = {"5_star":1,"5_star_perma":2,"4_star":3,"3_star":4}   
                 best_result = min(results, key=lambda x: rarete_priority[x["rarete"]])
-                if not play_video(best_result["animation"], screen,WIDTH,HEIGHT, loop=False):
+                if not play_video(best_result["animation"], screen, loop=False):
                     running = False
                 continue_running, reset_to_banniere = afficher_resultats(results, screen)
                 if not continue_running:
