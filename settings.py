@@ -1,21 +1,26 @@
 import pygame
 from character import *
+import json
 pygame.init()
+
+with open("save/save.json") as f:
+    data = json.load(f)
 
 ##############
 # ---pity--- #
 ##############
 
-pity_5_star = 70
-pity_4_star = 0
+pity_5_star = data["data"][0]["pity_5_star"]
+pity_4_star = data["data"][1]["pity_4_star"]
 soft_pity = 73
 hard_pity = 90
-garanti = False
+garanti = data["data"][2]["garanti"]
 multi = 10  # Petit conseil ne pas mettre au dessus de 100, et pas en dessous de 5 sinon c'est pas beau
 chance_globale = 100/100 # défaut : 100%
 proba_init_5_star = 0.006
 proba_init_4_star = 0.051
 proba_effective_5_star = proba_init_5_star*chance_globale
+
 
 ##################
 # --- Screen --- #
@@ -41,13 +46,14 @@ try:
 except:
     use_custom_cursor = False
 
-# --- Boutons de Voeux --- #
+# --- Boutons  --- #
 button_height = int(HEIGHT * 60 / 900)
 button_width = int(HEIGHT * 200 / 900)
 button_spacing = int(HEIGHT * 20 / 900)
 button_bottom_margin = int(HEIGHT * 80 / 900)
-button_x1_rect = pygame.Rect(WIDTH//2 - button_width - button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
-button_multi_rect = pygame.Rect(WIDTH//2 + button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
+button_x1 = pygame.Rect(WIDTH//2 - button_width - button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
+button_multi = pygame.Rect(WIDTH//2 + button_spacing//2, HEIGHT - button_bottom_margin, button_width, button_height)
+button_save = pygame.Rect(WIDTH - button_width - button_spacing//1.5 ,button_spacing//1.5 , button_width, button_height)
 button_color = (255, 255, 230)
 button_hover_color = (200, 200, 170)
 # --- Boutons choix bannière --- #
@@ -63,6 +69,7 @@ for i, char in enumerate(characters["5_star"]):
         banniere_button_height
     )
     banniere_buttons.append((rect, char["name"]))
+
 # --- Miscellaenous --- # 
 font_size = int(HEIGHT * 40 / 900)  
 font = pygame.font.Font("font/genshin.ttf", font_size)
@@ -76,3 +83,5 @@ pity_y3 = int(HEIGHT * 90 / 900)
 pity_x = int(HEIGHT * 20 / 900)
 border_thickness = int(HEIGHT * 5 / 900)
 border_radius = int(HEIGHT * 10 / 900)
+current_banner_index = data["data"][3]["current_banner_index"]
+banniere_path = characters["5_star"][current_banner_index]["banniere"]

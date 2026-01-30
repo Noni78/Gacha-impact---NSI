@@ -12,8 +12,6 @@ from settings import *
 pygame.init()
 background = scale_to_height(pygame.image.load("img/background.png").convert_alpha(), HEIGHT)
 background_wishing = scale_to_height(pygame.image.load("img/background_wishing.png").convert_alpha(), HEIGHT)
-current_banner_index = random.randint(0,7) # l'index correspond aux 5 étoiles non perma dans l'ordre ou ils sont dans le dictionnaire character, ici c'est aléatoire
-banniere_path = characters["5_star"][current_banner_index]["banniere"]
 banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)
 #########################################
 # --- Fonctions (non délocalizable) --- #
@@ -312,8 +310,9 @@ def afficher_resultats(results, screen,type):
     return True, True
 
 def boutons():
-    draw_button(screen, button_x1_rect, "Voeu x1", mouse_pos,button_hover_color,button_color,button_font)
-    draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos,button_hover_color,button_color,button_font)
+    draw_button(screen, button_x1, "Voeu x1", mouse_pos,button_hover_color,button_color,button_font)
+    draw_button(screen, button_multi, f"Voeu x{multi}", mouse_pos,button_hover_color,button_color,button_font)
+    draw_button(screen, button_save, f"save", mouse_pos,button_hover_color,button_color,button_font)
     draw_banniere_buttons(screen, mouse_pos,banniere_buttons,button_font)
     return
 
@@ -336,7 +335,7 @@ while running:
             running = False
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-            if button_x1_rect.collidepoint(event.pos):
+            if button_x1.collidepoint(event.pos):
                 result = wish(pity_5_star, pity_4_star, garanti, current_banner_index, soft_pity, hard_pity)
                 wish_rarete = result["rarete"]
                 wish_splash_art = result["splash_art"]
@@ -354,7 +353,7 @@ while running:
                     wish_splash_art = None
                     animation_progress = 0.0  
 
-            elif button_multi_rect.collidepoint(event.pos):
+            elif button_multi.collidepoint(event.pos):
                 results = []
                 for _ in range(multi):
                     result = wish(pity_5_star, pity_4_star, garanti, current_banner_index, soft_pity, hard_pity)
@@ -375,6 +374,9 @@ while running:
                     wish_splash_art = None
                     animation_progress = 0.0
 
+            elif button_save.collidepoint(event.pos):
+                sauvegarder_pity(pity_5_star,pity_4_star,garanti,current_banner_index)
+            
             elif wish_splash_art is not None:
                 wish_rarete = None
                 wish_splash_art = None

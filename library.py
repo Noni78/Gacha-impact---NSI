@@ -275,3 +275,25 @@ def wish(pity_5_star, pity_4_star, garanti,current_banner_index, soft_pity=73, h
         "new_pity_4_star": new_pity_4_star,
         "new_garanti": new_garanti
     }
+
+################
+# --- Save --- #
+################
+
+def sauvegarder_pity(pity_5, pity_4, garanti,banner_index, nom_fichier="save/save.json"):
+    """
+    Sauvegarde les données de pity dans un fichier JSON.
+    """
+    donnees = {
+        "data": [
+            {"pity_5_star": pity_5},
+            {"pity_4_star": pity_4},
+            {"garanti": str(garanti)},
+            {"current_banner_index": banner_index}
+        ]
+    }
+    
+    with open(nom_fichier, 'w', encoding='utf-8') as f:
+        json.dump(donnees, f, indent=4, ensure_ascii=False)
+    
+    print(f"Données sauvegardées dans {nom_fichier}")
