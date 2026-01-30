@@ -4,18 +4,21 @@ import random
 from library import *
 from character import *
 from settings import *
+
 #########################
 # --- Initalisation --- #
 #########################
+
 pygame.init()
 background = scale_to_height(pygame.image.load("img/background.png").convert_alpha(), HEIGHT)
 background_wishing = scale_to_height(pygame.image.load("img/background_wishing.png").convert_alpha(), HEIGHT)
 current_banner_index = random.randint(0,7) # l'index correspond aux 5 étoiles non perma dans l'ordre ou ils sont dans le dictionnaire character, ici c'est aléatoire
 banniere_path = characters["5_star"][current_banner_index]["banniere"]
 banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)
-#####################
-# --- Fonctions --- #
-#####################
+#########################################
+# --- Fonctions (non délocalizable) --- #
+########################################
+
 def actualiser_text_pity():
     pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
     odd_5_star =(pity_5_star - soft_pity) * ((1 -(proba_effective_5_star)) / (hard_pity - soft_pity)) + (proba_effective_5_star) if pity_5_star > soft_pity else (proba_effective_5_star)
@@ -313,9 +316,11 @@ def boutons():
     draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos,button_hover_color,button_color,button_font)
     draw_banniere_buttons(screen, mouse_pos,banniere_buttons,button_font)
     return
+
 #############################
 # --- Boucle principale --- #
 #############################
+
 running = True
 
 while running:

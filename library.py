@@ -8,6 +8,7 @@ pygame.init()
 #####################
 # --- Affichage --- #
 #####################
+
 def scale_to_height(image, target_height):
     w, h = image.get_size()
     scale_factor = target_height / h
@@ -171,6 +172,7 @@ def afficher_souris():
 ###################
 # --- Calculs --- #
 ###################
+
 def rarete(pity_5, pity_4, proba_5=0.006, proba_4=0.051,chance=1.0,soft_pity=70, hard_pity=90):
     """
     Calcule la rareté d'un tirage sans modifier les compteurs de pity.
