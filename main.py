@@ -4,21 +4,23 @@ import random
 from library import *
 from character import *
 from settings import *
-
-# --- Initalisation ---
+#########################
+# --- Initalisation --- #
+#########################
 pygame.init()
 background = scale_to_height(pygame.image.load("img/background.png").convert_alpha(), HEIGHT)
 background_wishing = scale_to_height(pygame.image.load("img/background_wishing.png").convert_alpha(), HEIGHT)
 current_banner_index = random.randint(0,7) # l'index correspond aux 5 étoiles non perma dans l'ordre ou ils sont dans le dictionnaire character, ici c'est aléatoire
 banniere_path = characters["5_star"][current_banner_index]["banniere"]
 banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)
-
-# --- Fonctions ---
+#####################
+# --- Fonctions --- #
+#####################
 def actualiser_text_pity():
     pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
     odd_5_star =(pity_5_star - soft_pity) * ((1 -(proba_effective_5_star)) / (hard_pity - soft_pity)) + (proba_effective_5_star) if pity_5_star > soft_pity else (proba_effective_5_star)
     pity_text_2 = button_font.render(f"chance 5★: {min(odd_5_star*100, 100):.2f}%", True, (255, 215, 0))
-    pity_text_3 = button_font.render(f"5★ limité garanti: {guaranteed_5_star}", True, (255, 215, 0))
+    pity_text_3 = button_font.render(f"5★ limité garanti: {garanti}", True, (255, 215, 0))
     screen.blit(pity_text, (pity_x, pity_y))
     screen.blit(pity_text_2, (pity_x, pity_y2))
     screen.blit(pity_text_3, (pity_x, pity_y3))
@@ -311,41 +313,32 @@ def boutons():
     draw_button(screen, button_multi_rect, f"Voeu x{multi}", mouse_pos,button_hover_color,button_color,button_font)
     draw_banniere_buttons(screen, mouse_pos,banniere_buttons,button_font)
     return
-
-# --- Boucle principale ---
+#############################
+# --- Boucle principale --- #
+#############################
 running = True
 
 while running:
     mouse_pos = pygame.mouse.get_pos()
-    # --- Affichage background et banniere---
-    screen.fill((0, 0, 0))
     screen.blit(background, (WIDTH//2 - background.get_width()//2, HEIGHT//2 - background.get_height()//2))
     if wish_splash_art is None:
         afficher_banniere()
-    else:
-        screen.blit(background_wishing, (WIDTH//2 - background_wishing.get_width()//2, HEIGHT//2 - background_wishing.get_height()//2))
-        animer_splash_art(screen, wish_splash_art,animation_progress)
-        
-        if animation_progress < 1.0:
-            animation_progress += 0.1
-    
     boutons()
     actualiser_text_pity()
     
-    # --- Gestion events (boutons et souris) ---
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if button_x1_rect.collidepoint(event.pos):
-                result = wish(pity_5_star, pity_4_star, guaranteed_5_star, current_banner_index, soft_pity, hard_pity)
+                result = wish(pity_5_star, pity_4_star, garanti, current_banner_index, soft_pity, hard_pity)
                 wish_rarete = result["rarete"]
                 wish_splash_art = result["splash_art"]
                 animation_progress = 0.0  
                 pity_5_star = result["new_pity_5_star"]
                 pity_4_star = result["new_pity_4_star"]
-                guaranteed_5_star = result["new_guaranteed_5_star"]
+                garanti = result["new_garanti"]
                 if not play_video(result["animation"], screen, loop=False):
                     running = False
                 continue_running, reset_to_banniere = afficher_resultats(result, screen, type= "single")
@@ -359,11 +352,11 @@ while running:
             elif button_multi_rect.collidepoint(event.pos):
                 results = []
                 for _ in range(multi):
-                    result = wish(pity_5_star, pity_4_star, guaranteed_5_star, current_banner_index, soft_pity, hard_pity)
+                    result = wish(pity_5_star, pity_4_star, garanti, current_banner_index, soft_pity, hard_pity)
                     results.append(result)
                     pity_5_star = result["new_pity_5_star"]
                     pity_4_star = result["new_pity_4_star"]
-                    guaranteed_5_star = result["new_guaranteed_5_star"]
+                    garanti = result["new_garanti"]
 
                 rarete_priority = {"5_star":1,"5_star_perma":2,"4_star":3,"3_star":4}   
                 best_result = min(results, key=lambda x: rarete_priority[x["rarete"]])
@@ -393,7 +386,7 @@ while running:
     
     if use_custom_cursor:
         afficher_souris()
-    # --- Mettre à jour écran + gerer vitesse constanteh ---
+        
     pygame.display.flip()
     delta_time = clock.tick(60)/1000
     delta_time = min(delta_time, 0.05)

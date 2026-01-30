@@ -4,7 +4,10 @@ import cv2
 from character import *
 from settings import *
 pygame.init()
-# --- Affichage ---
+
+#####################
+# --- Affichage --- #
+#####################
 def scale_to_height(image, target_height):
     w, h = image.get_size()
     scale_factor = target_height / h
@@ -147,7 +150,6 @@ def draw_button(screen, rect, text, mouse_pos,hover_color,color,font):
     """
     if rect.collidepoint(mouse_pos):
         color = hover_color
-        print(hover_color)
     else:
         color = color
     
@@ -166,7 +168,9 @@ def afficher_souris():
     cursor_x = mouse_pos[0] - cursor_img.get_width() // 2 
     cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
     screen.blit(cursor_img, (cursor_x, cursor_y))
-# --- Calculs ---
+###################
+# --- Calculs --- #
+###################
 def rarete(pity_5, pity_4, proba_5=0.006, proba_4=0.051,chance=1.0,soft_pity=70, hard_pity=90):
     """
     Calcule la rareté d'un tirage sans modifier les compteurs de pity.
@@ -200,13 +204,13 @@ def rarete(pity_5, pity_4, proba_5=0.006, proba_4=0.051,chance=1.0,soft_pity=70,
         )[0]
     return tirage
 
-def wish(pity_5_star, pity_4_star, guaranteed_5_star,current_banner_index, soft_pity=73, hard_pity=90, ):
+def wish(pity_5_star, pity_4_star, garanti,current_banner_index, soft_pity=73, hard_pity=90, ):
     """
     Effectue 1 voeu et retourne tous les résultats.
     
     Args:
         pity_5_star,pity_4_star (int): compteur actuel pity 5★ et 4★
-        guaranteed_5_star (bool): True si le prochain 5★ est garanti 
+        garanti (bool): True si le prochain 5★ est garanti 
         soft_pity (int, optional): soft pity 5★
         hard_pity (int, optional): hard pity 5★ 
         current_banner_index (int): index de la bannière actuelle
@@ -219,13 +223,13 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star,current_banner_index, soft_
             "splash_art": pygame.Surface,  #image du personnage
             "new_pity_5_star": int,  # nouvelle pity 5★
             "new_pity_4_star": int,  # nouvelle pity 4★
-            "new_guaranteed_5_star": bool  # nouveau statut guaranteed
+            "new_garanti": bool  # nouveau statut guaranteed
         }
     """
     wish_rarete = rarete(pity_5_star, pity_4_star,proba_init_5_star,proba_init_4_star,chance_globale ,soft_pity, hard_pity)
     new_pity_5_star = pity_5_star
     new_pity_4_star = pity_4_star
-    new_guaranteed_5_star = guaranteed_5_star
+    new_garanti = garanti
     
     if wish_rarete == "5_star":
         new_pity_5_star = 0
@@ -241,11 +245,11 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star,current_banner_index, soft_
         new_pity_4_star += 1
 
     if wish_rarete == "5_star":
-        if not guaranteed_5_star and random.random() < 0.5:
-            new_guaranteed_5_star = True
+        if not garanti and random.random() < 0.5:
+            new_garanti = True
             wish_rarete = "5_star_perma"
         else:
-            new_guaranteed_5_star = False
+            new_garanti = False
     if wish_rarete == "4_star":
         featured_4_stars = characters["5_star"][current_banner_index].get("featured_4_star", [])
         if featured_4_stars and random.random() < 0.8:  
@@ -267,5 +271,5 @@ def wish(pity_5_star, pity_4_star, guaranteed_5_star,current_banner_index, soft_
         "splash_art": wish_splash_art,
         "new_pity_5_star": new_pity_5_star,
         "new_pity_4_star": new_pity_4_star,
-        "new_guaranteed_5_star": new_guaranteed_5_star
+        "new_garanti": new_garanti
     }
