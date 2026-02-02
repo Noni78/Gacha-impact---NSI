@@ -239,21 +239,35 @@ def wish(pity_5_star, pity_4_star, garanti,current_banner_index,stack_capture_ra
     capture_radiance = False
     
 
-    if wish_rarete == "5_star":
-        
-        if not garanti and random.random() < 0.5:
-            if stack_capture_radiance >= 3:
+    if wish_rarete == "5_star":   
+        if stack_capture_radiance < 2:
+            print("<--5050 en cours-->")
+            if not garanti:
+                if random.random() <= 0.5:
+                    new_garanti = False
+                    new_stack_capture_radiance = max(0, stack_capture_radiance - 1)
+                else:
+                    new_garanti = True
+                    wish_rarete = "5_star_perma"
+                    new_stack_capture_radiance = stack_capture_radiance + 1
+            else:
                 new_garanti = False
-                new_stack_capture_radiance = 1
+                new_stack_capture_radiance = max(0, stack_capture_radiance - 1)
+        elif stack_capture_radiance == 2:
+            print("<-- 5545 en cours -->")
+            if random.random() <= 0.55:
+                new_garanti = False
                 capture_radiance = True
-            else: 
+                new_stack_capture_radiance = 1
+            else:
                 new_garanti = True
                 wish_rarete = "5_star_perma"
-                new_stack_capture_radiance += 1
-        else:
+                new_stack_capture_radiance = 3
+        else: 
+            print("<-- Vous avez si peu de chance que je vous fait gagner celui la -->")
             new_garanti = False
-            if stack_capture_radiance > 1:
-                new_stack_capture_radiance -= 1
+            capture_radiance = True
+            new_stack_capture_radiance = 1
     if wish_rarete == "4_star":
         featured_4_stars = characters["5_star"][current_banner_index].get("featured_4_star", [])
         if featured_4_stars and random.random() < 0.8:  
@@ -267,7 +281,7 @@ def wish(pity_5_star, pity_4_star, garanti,current_banner_index,stack_capture_ra
     else:
         wish_result_character = random.choice(characters[wish_rarete])
 
-    if wish_rarete == "5_star":
+    if wish_rarete in ("5_star","5_star_perma"):
         new_pity_5_star = 0
         new_pity_4_star += 1
         if capture_radiance:
