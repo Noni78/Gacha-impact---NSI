@@ -69,8 +69,9 @@ for i, char in enumerate(characters["5_star"]):
         banniere_button_height
     )
     banniere_buttons.append((rect, char["name"]))
-
+#########################
 # --- Miscellaenous --- # 
+#########################
 font_size = int(HEIGHT * 40 / 900)  
 font = pygame.font.Font("font/genshin.ttf", font_size)
 button_font_size = int(HEIGHT * 30 / 900)

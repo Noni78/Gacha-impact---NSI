@@ -169,6 +169,7 @@ def afficher_souris():
     cursor_x = mouse_pos[0] - cursor_img.get_width() // 2 
     cursor_y = mouse_pos[1] - cursor_img.get_height() // 2
     screen.blit(cursor_img, (cursor_x, cursor_y))
+
 ###################
 # --- Calculs --- #
 ###################
