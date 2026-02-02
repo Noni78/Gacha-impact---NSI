@@ -1,6 +1,5 @@
 import pygame
 import sys
-import random
 from library import *
 from character import *
 from settings import *
@@ -13,6 +12,7 @@ pygame.init()
 background = scale_to_height(pygame.image.load("img/background.png").convert_alpha(), HEIGHT)
 background_wishing = scale_to_height(pygame.image.load("img/background_wishing.png").convert_alpha(), HEIGHT)
 banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.load(banniere_path).convert_alpha(), WIDTH, HEIGHT, border_percent=15)
+
 #########################################
 # --- Fonctions (non délocalizable) --- #
 ########################################
