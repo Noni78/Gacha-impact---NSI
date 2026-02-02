@@ -134,3 +134,5 @@ characters = {
         {"name": "Syrider Sword", "image": "img/3_star/Skyrider_Sword.png", "type": "sword"}, 
     ]
 }
+
+

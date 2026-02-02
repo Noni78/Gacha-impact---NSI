@@ -22,9 +22,11 @@ def actualiser_text_pity():
     odd_5_star =(pity_5_star - soft_pity) * ((1 -(proba_effective_5_star)) / (hard_pity - soft_pity)) + (proba_effective_5_star) if pity_5_star > soft_pity else (proba_effective_5_star)
     pity_text_2 = button_font.render(f"chance 5★: {min(odd_5_star*100, 100):.2f}%", True, (255, 215, 0))
     pity_text_3 = button_font.render(f"5★ limité garanti: {garanti}", True, (255, 215, 0))
+    capture_radiance = button_font.render(f"Stack: {stack_capture_radiance}", True, (255, 215, 0))
     screen.blit(pity_text, (pity_x, pity_y))
     screen.blit(pity_text_2, (pity_x, pity_y2))
     screen.blit(pity_text_3, (pity_x, pity_y3))
+    screen.blit(capture_radiance, (capture_radiance_x, capture_radiance_y))
     return 
 
 def afficher_banniere():
@@ -336,13 +338,14 @@ while running:
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if button_x1.collidepoint(event.pos):
-                result = wish(pity_5_star, pity_4_star, garanti, current_banner_index, soft_pity, hard_pity)
+                result = wish(pity_5_star, pity_4_star, garanti, current_banner_index,stack_capture_radiance, soft_pity, hard_pity) 
                 wish_rarete = result["rarete"]
                 wish_splash_art = result["splash_art"]
                 animation_progress = 0.0  
                 pity_5_star = result["new_pity_5_star"]
                 pity_4_star = result["new_pity_4_star"]
                 garanti = result["new_garanti"]
+                stack_capture_radiance = result["new_stack_capture_radiance"]
                 if not play_video(result["animation"], screen, loop=False):
                     running = False
                 continue_running, reset_to_banniere = afficher_resultats(result, screen, type= "single")
@@ -356,11 +359,12 @@ while running:
             elif button_multi.collidepoint(event.pos):
                 results = []
                 for _ in range(multi):
-                    result = wish(pity_5_star, pity_4_star, garanti, current_banner_index, soft_pity, hard_pity)
+                    result = wish(pity_5_star, pity_4_star, garanti, current_banner_index,stack_capture_radiance, soft_pity, hard_pity)
                     results.append(result)
                     pity_5_star = result["new_pity_5_star"]
                     pity_4_star = result["new_pity_4_star"]
                     garanti = result["new_garanti"]
+                    stack_capture_radiance = result["new_stack_capture_radiance"]
 
                 rarete_priority = {"5_star":1,"5_star_perma":2,"4_star":3,"3_star":4}   
                 best_result = min(results, key=lambda x: rarete_priority[x["rarete"]])
@@ -375,7 +379,7 @@ while running:
                     animation_progress = 0.0
 
             elif button_save.collidepoint(event.pos):
-                sauvegarder_pity(pity_5_star,pity_4_star,garanti,current_banner_index)
+                sauvegarder(pity_5_star,pity_4_star,garanti,current_banner_index,stack_capture_radiance)
             
             elif wish_splash_art is not None:
                 wish_rarete = None

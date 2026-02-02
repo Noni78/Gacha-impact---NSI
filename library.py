@@ -207,7 +207,7 @@ def rarete(pity_5, pity_4, proba_5=0.006, proba_4=0.051,chance=1.0,soft_pity=70,
         )[0]
     return tirage
 
-def wish(pity_5_star, pity_4_star, garanti,current_banner_index, soft_pity=73, hard_pity=90, ):
+def wish(pity_5_star, pity_4_star, garanti,current_banner_index,stack_capture_radiance, soft_pity=73, hard_pity=90, ):
     """
     Effectue 1 voeu et retourne tous les résultats.
     
@@ -217,6 +217,7 @@ def wish(pity_5_star, pity_4_star, garanti,current_banner_index, soft_pity=73, h
         soft_pity (int, optional): soft pity 5★
         hard_pity (int, optional): hard pity 5★ 
         current_banner_index (int): index de la bannière actuelle
+        stack_capture_radiance (int): nombre de 5050 perdu d'affilé
     
     Returns:
         dict: {
@@ -227,32 +228,32 @@ def wish(pity_5_star, pity_4_star, garanti,current_banner_index, soft_pity=73, h
             "new_pity_5_star": int,  # nouvelle pity 5★
             "new_pity_4_star": int,  # nouvelle pity 4★
             "new_garanti": bool  # nouveau statut guaranteed
+            "new_stack_capture_radiance" : int #nouveau nombre de 5050 perdu affilé
         }
     """
     wish_rarete = rarete(pity_5_star, pity_4_star,proba_init_5_star,proba_init_4_star,chance_globale ,soft_pity, hard_pity)
     new_pity_5_star = pity_5_star
     new_pity_4_star = pity_4_star
     new_garanti = garanti
+    new_stack_capture_radiance = stack_capture_radiance
+    capture_radiance = False
     
-    if wish_rarete == "5_star":
-        new_pity_5_star = 0
-        new_pity_4_star += 1
-        wish_animation = "videos/pull_5_star.mp4"
-    elif wish_rarete == "4_star":
-        wish_animation = "videos/pull_4_star.mp4"
-        new_pity_4_star = 0
-        new_pity_5_star += 1
-    else:
-        wish_animation = "videos/pull_3_star.mp4"
-        new_pity_5_star += 1
-        new_pity_4_star += 1
 
     if wish_rarete == "5_star":
+        
         if not garanti and random.random() < 0.5:
-            new_garanti = True
-            wish_rarete = "5_star_perma"
+            if stack_capture_radiance >= 3:
+                new_garanti = False
+                new_stack_capture_radiance = 1
+                capture_radiance = True
+            else: 
+                new_garanti = True
+                wish_rarete = "5_star_perma"
+                new_stack_capture_radiance += 1
         else:
             new_garanti = False
+            if stack_capture_radiance > 1:
+                new_stack_capture_radiance -= 1
     if wish_rarete == "4_star":
         featured_4_stars = characters["5_star"][current_banner_index].get("featured_4_star", [])
         if featured_4_stars and random.random() < 0.8:  
@@ -265,7 +266,22 @@ def wish(pity_5_star, pity_4_star, garanti,current_banner_index, soft_pity=73, h
         wish_result_character = characters["5_star"][current_banner_index]
     else:
         wish_result_character = random.choice(characters[wish_rarete])
-    
+
+    if wish_rarete == "5_star":
+        new_pity_5_star = 0
+        new_pity_4_star += 1
+        if capture_radiance:
+            wish_animation ="videos/capture_radiance.gif"
+        else:
+            wish_animation = "videos/pull_5_star.mp4"        
+    elif wish_rarete == "4_star":
+        wish_animation = "videos/pull_4_star.mp4"
+        new_pity_4_star = 0
+        new_pity_5_star += 1
+    else:
+        wish_animation = "videos/pull_3_star.mp4"
+        new_pity_5_star += 1
+        new_pity_4_star += 1
     wish_splash_art = scale_to_height(pygame.image.load(wish_result_character["image"]).convert_alpha(), HEIGHT)
     return {
         "rarete": wish_rarete,
@@ -274,14 +290,15 @@ def wish(pity_5_star, pity_4_star, garanti,current_banner_index, soft_pity=73, h
         "splash_art": wish_splash_art,
         "new_pity_5_star": new_pity_5_star,
         "new_pity_4_star": new_pity_4_star,
-        "new_garanti": new_garanti
+        "new_garanti": new_garanti,
+        "new_stack_capture_radiance": new_stack_capture_radiance,
     }
 
 ################
 # --- Save --- #
 ################
 
-def sauvegarder_pity(pity_5, pity_4, garanti,banner_index, nom_fichier="save/save.json"):
+def sauvegarder(pity_5, pity_4, garanti,banner_index,stack_capture_radiance, nom_fichier="save/save.json"):
     """
     Sauvegarde les données de pity dans un fichier JSON.
     """
@@ -290,7 +307,8 @@ def sauvegarder_pity(pity_5, pity_4, garanti,banner_index, nom_fichier="save/sav
             {"pity_5_star": pity_5},
             {"pity_4_star": pity_4},
             {"garanti": str(garanti)},
-            {"current_banner_index": banner_index}
+            {"current_banner_index": banner_index},
+            {"stack_capture_radiance":stack_capture_radiance}
         ]
     }
     

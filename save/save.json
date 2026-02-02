@@ -1,16 +1,19 @@
 {
     "data": [
         {
-            "pity_5_star": 7
+            "pity_5_star": 70
         },
         {
-            "pity_4_star": 1
+            "pity_4_star": 6
         },
         {
-            "garanti": "False"
+            "garanti": "True"
         },
         {
-            "current_banner_index": 4
+            "current_banner_index": 5
+        },
+        {
+            "stack_capture_radiance": 3
         }
     ]
 }
