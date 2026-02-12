@@ -26,7 +26,7 @@ proba_effective_5_star = proba_init_5_star*chance_globale
 # --- Affchage --- #
 ####################
 
-HEIGHT = 670 ############################################## --- HEIGHT --- ####################################
+HEIGHT = 810############################################# --- HEIGHT --- ####################################
 WIDTH = int(HEIGHT*16/9)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Totally not a Genshin Impact wishing replica")

@@ -15,7 +15,7 @@ banniere, banner_border_w, banner_border_h = scale_with_borders(pygame.image.loa
 
 #########################################
 # --- Fonctions (non délocalizable) --- #
-########################################
+#########################################
 
 def actualiser_text_pity():
     pity_text = button_font.render(f"Pity 5★: {pity_5_star}/{hard_pity}", True, (255, 215, 0))
@@ -314,7 +314,7 @@ def afficher_resultats(results, screen,type):
 def boutons():
     draw_button(screen, button_x1, "Voeu x1", mouse_pos,button_hover_color,button_color,button_font)
     draw_button(screen, button_multi, f"Voeu x{multi}", mouse_pos,button_hover_color,button_color,button_font)
-    draw_button(screen, button_save, f"save", mouse_pos,button_hover_color,button_color,button_font)
+    draw_button(screen, button_save, f"Save", mouse_pos,button_hover_color,button_color,button_font)
     draw_banniere_buttons(screen, mouse_pos,banniere_buttons,button_font)
     return
 

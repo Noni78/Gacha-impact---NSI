@@ -1,4 +1,8 @@
 {
     "python-envs.defaultEnvManager": "ms-python.python:system",
-    "python-envs.pythonProjects": []
+    "python-envs.pythonProjects": [],
+    "editor.fontFamily": "Consolas, Courier New, monospace",
+    "editor.mouseWheelZoom": true,
+    "diffEditor.experimental.showEmptyDecorations": false,
+    "files.autoSave": "afterDelay"
 }
