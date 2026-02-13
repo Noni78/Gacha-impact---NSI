@@ -23,7 +23,6 @@ background_wishing = scale_to_cover(background_wishing_source, WIDTH, HEIGHT)
 banniere, banner_border_w, banner_border_h = scale_with_borders(banniere_source, WIDTH, HEIGHT, border_percent=15)
 
 
-
 def apply_window_resize(requested_w, requested_h):
     global WIDTH, HEIGHT, screen
     global background, background_wishing, banniere, banner_border_w, banner_border_h
