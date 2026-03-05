@@ -33,9 +33,18 @@ def scale_to_cover(image, target_width, target_height):
 def scale_with_borders(image, target_width, target_height, border_percent=15):
     border_w = int(target_width * border_percent / 100)
     border_h = int(target_height * border_percent / 100)
-    new_width = target_width - (2 * border_w)
-    new_height = target_height - (2 * border_h)
-    return pygame.transform.scale(image, (new_width, new_height)), border_w, border_h
+    max_width = target_width - (2 * border_w)
+    max_height = target_height - (2 * border_h)
+
+    w, h = image.get_size()
+    scale_factor = min(max_width / w, max_height / h)
+    new_width = max(1, int(w * scale_factor))
+    new_height = max(1, int(h * scale_factor))
+
+    offset_x = border_w + (max_width - new_width) // 2
+    offset_y = border_h + (max_height - new_height) // 2
+
+    return pygame.transform.scale(image, (new_width, new_height)), offset_x, offset_y
 
 
 def draw_banniere_buttons(screen, mouse_pos, banniere_buttons, button_font):
@@ -355,15 +364,18 @@ def wish(pity_5_star, pity_4_star, garanti, current_banner_index, stack_capture_
 ################
 
 
-def sauvegarder(pity_5, pity_4, garanti, banner_index, stack_capture_radiance, nom_fichier="save/save.json"):
+def sauvegarder(pity_5, pity_4, garanti, banner_index, stack_capture_radiance, nom_fichier=None):
     """
     Sauvegarde les donnees de pity dans un fichier JSON.
     """
+    if nom_fichier is None:
+        nom_fichier = SAVE_FILE
+
     donnees = {
         "data": [
             {"pity_5_star": pity_5},
             {"pity_4_star": pity_4},
-            {"garanti": str(garanti)},
+            {"garanti": bool(garanti)},
             {"current_banner_index": banner_index},
             {"stack_capture_radiance": stack_capture_radiance},
         ]

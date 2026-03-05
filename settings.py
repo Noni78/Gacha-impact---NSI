@@ -1,12 +1,106 @@
 ﻿import json
+import os
+import sys
+
 import pygame
 
 from character import *
 
 pygame.init()
 
-with open("save/save.json", encoding="utf-8") as f:
-    data = json.load(f)
+
+def _default_save_data():
+    return {
+        "data": [
+            {"pity_5_star": 0},
+            {"pity_4_star": 0},
+            {"garanti": False},
+            {"current_banner_index": 0},
+            {"stack_capture_radiance": 0},
+        ]
+    }
+
+
+def _as_bool(value):
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.strip().lower() in ("1", "true", "yes", "oui")
+    return bool(value)
+
+
+def _normalize_save_data(raw_data):
+    default = _default_save_data()
+    data_list = raw_data.get("data", []) if isinstance(raw_data, dict) else []
+
+    def pick(index, key, fallback):
+        if index < len(data_list) and isinstance(data_list[index], dict):
+            return data_list[index].get(key, fallback)
+        return fallback
+
+    pity_5 = int(pick(0, "pity_5_star", default["data"][0]["pity_5_star"]))
+    pity_4 = int(pick(1, "pity_4_star", default["data"][1]["pity_4_star"]))
+    garanti = _as_bool(pick(2, "garanti", default["data"][2]["garanti"]))
+    current_banner_index = int(pick(3, "current_banner_index", default["data"][3]["current_banner_index"]))
+    stack_capture_radiance = int(pick(4, "stack_capture_radiance", default["data"][4]["stack_capture_radiance"]))
+
+    pity_5 = max(0, pity_5)
+    pity_4 = max(0, pity_4)
+    current_banner_index = max(0, min(current_banner_index, len(characters["5_star"]) - 1))
+    stack_capture_radiance = max(0, stack_capture_radiance)
+
+    return {
+        "data": [
+            {"pity_5_star": pity_5},
+            {"pity_4_star": pity_4},
+            {"garanti": garanti},
+            {"current_banner_index": current_banner_index},
+            {"stack_capture_radiance": stack_capture_radiance},
+        ]
+    }
+
+
+def _save_directory():
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+SAVE_FILE = os.path.join(_save_directory(), "save.json")
+LEGACY_SAVE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "save", "save.json")
+
+
+def _load_or_create_save():
+    default_data = _default_save_data()
+
+    if not os.path.exists(SAVE_FILE) and os.path.exists(LEGACY_SAVE_FILE):
+        try:
+            with open(LEGACY_SAVE_FILE, encoding="utf-8") as f:
+                legacy_data = _normalize_save_data(json.load(f))
+            with open(SAVE_FILE, "w", encoding="utf-8") as f:
+                json.dump(legacy_data, f, indent=4, ensure_ascii=False)
+            return legacy_data
+        except (OSError, json.JSONDecodeError, ValueError, TypeError):
+            pass
+
+    if not os.path.exists(SAVE_FILE):
+        with open(SAVE_FILE, "w", encoding="utf-8") as f:
+            json.dump(default_data, f, indent=4, ensure_ascii=False)
+        return default_data
+
+    try:
+        with open(SAVE_FILE, encoding="utf-8") as f:
+            loaded = _normalize_save_data(json.load(f))
+        with open(SAVE_FILE, "w", encoding="utf-8") as f:
+            json.dump(loaded, f, indent=4, ensure_ascii=False)
+        return loaded
+    except (OSError, json.JSONDecodeError, ValueError, TypeError):
+        with open(SAVE_FILE, "w", encoding="utf-8") as f:
+            json.dump(default_data, f, indent=4, ensure_ascii=False)
+        return default_data
+
+
+data = _load_or_create_save()
 
 ################
 # --- pity --- #
