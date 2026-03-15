@@ -8,9 +8,9 @@ from character import *
 from library import *
 from settings import *
 
-#########################
+##########################
 # --- Initialisation --- #
-#########################
+##########################
 
 pygame.init()
 

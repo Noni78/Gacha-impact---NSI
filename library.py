@@ -79,7 +79,9 @@ def animer_splash_art(screen, splash_art, progress=1.0, clamp_to_screen=False):
             ratio = min(max_width / new_width, max_height / new_height)
             new_width = int(new_width * ratio)
             new_height = int(new_height * ratio)
-
+    else :
+        max_width = int(WIDTH * 1.4)
+        max_height = int(HEIGHT * 1.4)
     scaled_splash = pygame.transform.scale(splash_art, (new_width, new_height))
 
     x = WIDTH // 2 - scaled_splash.get_width() // 2
