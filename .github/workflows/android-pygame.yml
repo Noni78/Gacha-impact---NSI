@@ -12,6 +12,7 @@ on:
       - 'videos/**'
       - 'font/**'
       - 'buildozer.spec'
+      - 'p4a-recipes/**'
       - '.github/workflows/android-pygame.yml'
   workflow_dispatch:
 
@@ -40,10 +41,10 @@ jobs:
       - name: Install Android build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            build-essential ccache git zip unzip \
-            autoconf automake libtool pkg-config \
-            zlib1g-dev libffi-dev libssl-dev libsqlite3-dev \
+          sudo apt-get install -y \\
+            build-essential ccache git zip unzip \\
+            autoconf automake libtool pkg-config \\
+            zlib1g-dev libffi-dev libssl-dev libsqlite3-dev \\
             libncurses5-dev libncursesw5-dev cmake libltdl-dev
 
       - name: Install Buildozer
@@ -51,15 +52,16 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install buildozer==1.6.0 Cython==0.29.36
 
+      - name: Validate Python source syntax
+        run: python -m compileall -q main.py library.py settings.py character.py
+
       - name: Cache Android build toolchain
         uses: actions/cache@v4
         with:
           path: |
             .buildozer
             ~/.buildozer
-          key: android-pygame-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
-          restore-keys: |
-            android-pygame-${{ runner.os }}-
+          key: android-pygame-${{ runner.os }}-${{ hashFiles('buildozer.spec', 'p4a-recipes/**', '.github/workflows/android-pygame.yml') }}
 
       - name: Build the original Pygame project
         run: buildozer -v android debug

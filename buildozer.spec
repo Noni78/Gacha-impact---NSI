@@ -19,9 +19,10 @@ requirements = python3==3.11.5,hostpython3==3.11.5,pygame,opencv
 orientation = landscape
 fullscreen = 1
 
-# Pygame runs through SDL2 on Android.
+# SDL2 is the Android backend. Pin p4a so recipe and toolchain versions stay reproducible.
 p4a.bootstrap = sdl2
 p4a.branch = develop
+p4a.commit = 1c9a4b4f817847bd8505d972d1a0e6f965929a88
 p4a.local_recipes = ./p4a-recipes
 
 android.api = 35
