@@ -22,6 +22,7 @@ fullscreen = 1
 # Pygame runs through SDL2 on Android.
 p4a.bootstrap = sdl2
 p4a.branch = develop
+p4a.local_recipes = ./p4a-recipes
 
 android.api = 35
 android.minapi = 24
