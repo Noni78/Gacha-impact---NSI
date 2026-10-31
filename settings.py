@@ -6,6 +6,9 @@ import pygame
 
 from character import *
 
+# SDL translates Android touch taps into standard Pygame mouse events.
+os.environ.setdefault("SDL_MOUSE_TOUCH_EVENTS", "1")
+
 pygame.init()
 
 
@@ -61,6 +64,14 @@ def _normalize_save_data(raw_data):
 
 
 def _save_directory():
+    # Android packages application assets as read-only resources. Save user data
+    # in the app-private writable directory instead of beside the bundled code.
+    try:
+        from android.storage import app_storage_path
+        return app_storage_path()
+    except ImportError:
+        pass
+
     if getattr(sys, "frozen", False):
         return os.path.dirname(sys.executable)
     return os.path.dirname(os.path.abspath(__file__))
