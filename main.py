@@ -1,4 +1,8 @@
-﻿import sys
+﻿import os
+import sys
+
+# Resolve img/, videos/ and font/ relative to this script on both desktop and Android.
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 import pygame
 
