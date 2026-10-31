@@ -1,0 +1,8 @@
+{
+  "appId": "fr.noni78.gachaimpact",
+  "appName": "Gacha Impact",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
