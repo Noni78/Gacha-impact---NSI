@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#17233b"><meta name="description" content="Simulateur de vœux Genshin Impact">
+<link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="style.css">
+<title>Gacha Impact</title>
+</head>
+<body>
+<div id="app">
+<header><div><p class="eyebrow">SIMULATEUR DE VŒUX</p><h1>Gacha Impact</h1></div><button id="saveBtn" class="icon-btn" aria-label="Sauvegarder">↥</button></header>
+<section class="banner-panel">
+  <div class="banner-image"><img id="bannerImage" alt="Bannière sélectionnée"></div>
+  <div class="banner-controls"><button id="prevBanner" aria-label="Bannière précédente">‹</button><div><strong id="bannerName"></strong><small id="bannerPosition"></small></div><button id="nextBanner" aria-label="Bannière suivante">›</button></div>
+</section>
+<section class="pity-grid">
+ <div><small>Pity 5★</small><strong id="pity5">0 / 90</strong></div>
+ <div><small>Pity 4★</small><strong id="pity4">0 / 10</strong></div>
+ <div><small>Garanti 5★</small><strong id="guarantee">Non</strong></div>
+ <div><small>Capture radiance</small><strong id="radiance">0 / 3</strong></div>
+</section>
+<section class="actions"><button id="wishOne" class="wish-btn">VŒU ×1</button><button id="wishTen" class="wish-btn primary">VŒU ×10</button></section>
+<p class="hint">Les données sont sauvegardées automatiquement sur cet appareil.</p>
+<section id="lastResults" class="last-results"><h2>Derniers vœux</h2><p id="emptyState">Tes tirages apparaîtront ici.</p><div id="history" class="history"></div></section>
+<footer><button id="resetBtn">Réinitialiser la pity</button><span>Simulation non officielle · Genshin Impact</span></footer>
+</div>
+<div id="resultModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><span id="resultCounter"></span><button id="closeResult" aria-label="Fermer">✕</button></div><div id="resultVisual"></div><h2 id="resultName"></h2><p id="resultRarity"></p><button id="nextResult" class="wish-btn primary">Continuer</button></div></div>
+<script src="app.js"></script>
+</body></html>
