@@ -11,6 +11,7 @@ source.exclude_dirs = .git,.github,.vscode,__pycache__,mobile,unused,bin,.buildo
 
 version = 1.0.1
 
+# Native package: original Pygame/OpenCV source only; the discarded web prototype is excluded.
 # Keep the original Pygame/OpenCV implementation and its video playback code.
 requirements = python3==3.11.5,hostpython3==3.11.5,pygame,opencv
 
