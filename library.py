@@ -7,8 +7,6 @@ import pygame
 from character import *
 from settings import *
 
-pygame.init()
-
 #####################
 # --- Affichage --- #
 #####################

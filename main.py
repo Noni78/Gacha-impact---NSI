@@ -1,4 +1,8 @@
-﻿import sys
+﻿import os
+import sys
+
+# Resolve img/, videos/ and font/ relative to this script on both desktop and Android.
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 import pygame
 
@@ -12,11 +16,14 @@ from settings import *
 # --- Initialisation --- #
 ##########################
 
-pygame.init()
-
+# settings.py initializes Pygame and creates the display exactly once.
+if IS_ANDROID:
+    print("[Gacha Android] main imports complete; loading images", flush=True)
 background_source = pygame.image.load("img/background.png").convert_alpha()
 background_wishing_source = pygame.image.load("img/background_wishing.png").convert_alpha()
 banniere_source = pygame.image.load(banniere_path).convert_alpha()
+if IS_ANDROID:
+    print("[Gacha Android] initial images loaded", flush=True)
 
 background = scale_to_cover(background_source, WIDTH, HEIGHT)
 background_wishing = scale_to_cover(background_wishing_source, WIDTH, HEIGHT)
@@ -37,18 +44,28 @@ def apply_window_resize(requested_w, requested_h):
     if requested_w <= 0 or requested_h <= 0:
         return
 
-    if force_ratio_16_9:
-        ratio_w = requested_h * 16 // 9
-        ratio_h = requested_w * 9 // 16
-        if ratio_w <= requested_w:
-            new_w, new_h = ratio_w, requested_h
-        else:
-            new_w, new_h = requested_w, ratio_h
+    if IS_ANDROID:
+        # Do not destroy/recreate the Android SDL window after startup. A second
+        # set_mode() invalidates the previous display surface on this backend.
+        screen = pygame.display.get_surface()
+        if screen is None:
+            raise RuntimeError("La surface SDL Android n'est pas initialisee")
+        new_w, new_h = screen.get_size()
     else:
-        new_w, new_h = requested_w, requested_h
+        if force_ratio_16_9:
+            ratio_w = requested_h * 16 // 9
+            ratio_h = requested_w * 9 // 16
+            if ratio_w <= requested_w:
+                new_w, new_h = ratio_w, requested_h
+            else:
+                new_w, new_h = requested_w, ratio_h
+        else:
+            new_w, new_h = requested_w, requested_h
+
+        new_w, new_h = max(16, new_w), max(9, new_h)
+        screen = pygame.display.set_mode((new_w, new_h), pygame.RESIZABLE)
 
     WIDTH, HEIGHT = max(16, new_w), max(9, new_h)
-    screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 
     background = scale_to_cover(background_source, WIDTH, HEIGHT)
     background_wishing = scale_to_cover(background_wishing_source, WIDTH, HEIGHT)
@@ -110,15 +127,20 @@ def apply_window_resize(requested_w, requested_h):
     border_thickness = int(HEIGHT * 5 / 900)
     border_radius = int(HEIGHT * 10 / 900)
 
-    try:
-        cursor_img = pygame.image.load("img/Cursor.png").convert_alpha()
-        cursor_size = int(HEIGHT * 32 / 900)
-        cursor_img = pygame.transform.scale(cursor_img, (cursor_size, cursor_size))
-        pygame.mouse.set_visible(False)
-        use_custom_cursor = True
-    except Exception:
-        pygame.mouse.set_visible(True)
+    if IS_ANDROID:
+        cursor_img = None
+        cursor_size = 0
         use_custom_cursor = False
+    else:
+        try:
+            cursor_img = pygame.image.load("img/Cursor.png").convert_alpha()
+            cursor_size = int(HEIGHT * 32 / 900)
+            cursor_img = pygame.transform.scale(cursor_img, (cursor_size, cursor_size))
+            pygame.mouse.set_visible(False)
+            use_custom_cursor = True
+        except Exception:
+            pygame.mouse.set_visible(True)
+            use_custom_cursor = False
 
     settings.WIDTH = WIDTH
     settings.HEIGHT = HEIGHT
@@ -132,6 +154,8 @@ def apply_window_resize(requested_w, requested_h):
 
 
 apply_window_resize(WIDTH, HEIGHT)
+if IS_ANDROID:
+    print("[Gacha Android] layout initialized", flush=True)
 
 #####################
 # --- Fonctions --- #
@@ -419,6 +443,9 @@ def afficher_resultats(results, screen, type):
 #############################
 
 running = True
+
+if IS_ANDROID:
+    print("[Gacha Android] entering main render loop", flush=True)
 
 while running:
     mouse_pos = pygame.mouse.get_pos()

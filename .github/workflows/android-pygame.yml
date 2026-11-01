@@ -1,0 +1,108 @@
+name: Build Original Pygame APK
+
+on:
+  push:
+    branches: [native-pygame-android]
+    paths:
+      - 'main.py'
+      - 'library.py'
+      - 'settings.py'
+      - 'character.py'
+      - 'img/**'
+      - 'videos/**'
+      - 'font/**'
+      - 'buildozer.spec'
+      - 'p4a-recipes/**'
+      - '.github/workflows/android-pygame.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Android build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential ccache git zip unzip autoconf automake libtool pkg-config zlib1g-dev libffi-dev libssl-dev libsqlite3-dev libncurses5-dev libncursesw5-dev cmake libltdl-dev
+      - name: Install Buildozer
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install buildozer==1.6.0 Cython==0.29.36
+
+      - name: Validate Python source syntax
+        run: python -m compileall -q main.py library.py settings.py character.py
+
+      - name: Remove all previous Android build state
+        run: |
+          rm -rf .buildozer ~/.buildozer
+          mkdir -p bin
+
+      - name: Build the original Pygame project from scratch
+        run: buildozer -v android debug
+
+      - name: Validate APK archive and ARM64 native libraries
+        run: |
+          python - <<'PY'
+          import glob
+          import tarfile
+          import zipfile
+          from io import BytesIO
+
+          apks = glob.glob("bin/*.apk")
+          if len(apks) != 1:
+              raise SystemExit(f"Expected exactly one APK, found: {apks}")
+          apk_path = apks[0]
+          with zipfile.ZipFile(apk_path) as apk:
+              bad = apk.testzip()
+              if bad:
+                  raise SystemExit(f"Corrupt APK ZIP member: {bad}")
+              names = set(apk.namelist())
+              required = {
+                  "AndroidManifest.xml", "classes.dex", "assets/private.tar",
+                  "lib/arm64-v8a/libmain.so", "lib/arm64-v8a/libSDL2.so",
+                  "lib/arm64-v8a/libpybundle.so",
+                  "lib/arm64-v8a/libopencv_core.so",
+                  "lib/arm64-v8a/libopencv_videoio.so",
+              }
+              missing = sorted(required - names)
+              if missing:
+                  raise SystemExit(f"APK missing required entries: {missing}")
+              with tarfile.open(fileobj=BytesIO(apk.read("assets/private.tar"))) as app:
+                  app_files = set(app.getnames())
+                  app_required = {
+                      "main.pyc", "settings.pyc", "library.pyc", "character.pyc",
+                      "videos/pull_3_star.mp4", "videos/pull_4_star.mp4",
+                      "videos/pull_5_star.mp4", "videos/capture_radiance.gif",
+                      "font/genshin.ttf",
+                  }
+                  app_missing = sorted(app_required - app_files)
+                  if app_missing:
+                      raise SystemExit(f"APK missing game assets: {app_missing}")
+          print(f"Validated {apk_path}: ZIP OK, ARM64 SDL2/Python/OpenCV and game assets present")
+          PY
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: gacha-impact-original-pygame
+          path: bin/*.apk
+          if-no-files-found: error
+          retention-days: 30
