@@ -17,9 +17,13 @@ from settings import *
 ##########################
 
 # settings.py initializes Pygame and creates the display exactly once.
+if IS_ANDROID:
+    print("[Gacha Android] main imports complete; loading images", flush=True)
 background_source = pygame.image.load("img/background.png").convert_alpha()
 background_wishing_source = pygame.image.load("img/background_wishing.png").convert_alpha()
 banniere_source = pygame.image.load(banniere_path).convert_alpha()
+if IS_ANDROID:
+    print("[Gacha Android] initial images loaded", flush=True)
 
 background = scale_to_cover(background_source, WIDTH, HEIGHT)
 background_wishing = scale_to_cover(background_wishing_source, WIDTH, HEIGHT)
@@ -150,6 +154,8 @@ def apply_window_resize(requested_w, requested_h):
 
 
 apply_window_resize(WIDTH, HEIGHT)
+if IS_ANDROID:
+    print("[Gacha Android] layout initialized", flush=True)
 
 #####################
 # --- Fonctions --- #
@@ -437,6 +443,9 @@ def afficher_resultats(results, screen, type):
 #############################
 
 running = True
+
+if IS_ANDROID:
+    print("[Gacha Android] entering main render loop", flush=True)
 
 while running:
     mouse_pos = pygame.mouse.get_pos()

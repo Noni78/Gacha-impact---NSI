@@ -6,14 +6,14 @@ Cette configuration fabrique un APK à partir du **jeu Pygame Python d'origine**
 
 - `main.py`, `settings.py`, `library.py`, `character.py`
 - les dossiers `img/`, `font/` et `videos/`
-- Pygame via SDL2 et OpenCV pour le lecteur vidéo du jeu
+- Pygame 2.6.1 via SDL2 2.32.10, avec rendu `pygame.SCALED` sur Android ; OpenCV pour le lecteur vidéo du jeu
 - sauvegarde `save.json` dans le stockage privé de l'application Android
 
-L'écran est verrouillé en paysage pour conserver la mise en page prévue par le jeu. Sur Android, Pygame crée une seule surface SDL plein écran à la résolution de l'appareil ; le code de redimensionnement ne recrée pas la fenêtre. Les pressions tactiles sont converties en événements souris Pygame ; les actions existantes (`MOUSEBUTTONUP`) restent donc utilisées.
+L'écran est verrouillé en paysage pour conserver la mise en page prévue par le jeu. Sur Android, Pygame crée une seule surface logique 1280×720 en plein écran avec `pygame.SCALED`. SDL présente ensuite cette surface via son renderer, à la résolution physique de l'appareil ; le code de redimensionnement ne recrée pas la fenêtre. Les pressions tactiles sont converties en événements souris Pygame ; les actions existantes (`MOUSEBUTTONUP`) restent donc utilisées.
 
 ## Compilation
 
-Le workflow `.github/workflows/android-pygame.yml` construit l'APK avec Buildozer et python-for-android. L'exécution manuelle est également disponible depuis l'onglet Actions.
+Le workflow `.github/workflows/android-pygame.yml` construit l'APK avec Buildozer et python-for-android. Chaque exécution supprime les états Buildozer précédents (aucun cache de compilation), puis vérifie l'intégrité ZIP de l'APK, les bibliothèques natives ARM64 et les ressources du jeu. L'exécution manuelle est également disponible depuis l'onglet Actions.
 
 Récupérer l'artifact `gacha-impact-original-pygame`, puis installer l'APK contenu dans l'archive.
 

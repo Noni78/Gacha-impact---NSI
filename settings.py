@@ -17,7 +17,13 @@ IS_ANDROID = (
 # SDL translates Android touch taps into standard Pygame mouse events.
 os.environ.setdefault("SDL_MOUSE_TOUCH_EVENTS", "1")
 
+print("[Gacha Android] startup: before pygame.init", flush=True)
 pygame.init()
+if IS_ANDROID:
+    print(
+        f"[Gacha Android] pygame={pygame.version.ver}, SDL={pygame.get_sdl_version()}",
+        flush=True,
+    )
 
 
 def _default_save_data():
@@ -145,22 +151,22 @@ HEIGHT = 810
 WIDTH = int(HEIGHT * 16 / 9)
 
 if IS_ANDROID:
-    # Avoid SDL's (0, 0) desktop-size sentinel during Android startup.
-    # On some SDL2/Android combinations it can leave the window surface in an
-    # invalid state while pygame.display.set_mode clears the initial surface.
-    # Request a concrete 16:9 fullscreen surface; SDL scales it to the device.
+    # Render into Pygame's SCALED software framebuffer. SDL presents the frame
+    # through its renderer instead of drawing directly into the Android native
+    # window surface, targeting the SDL_FillRects startup crash on Android 16.
+    # Keep a 16:9 logical canvas; SDL scales it to the physical display.
     android_width, android_height = 1280, 720
-    try:
-        display_info = pygame.display.Info()
-        if display_info.current_w > 0 and display_info.current_h > 0:
-            android_width, android_height = display_info.current_w, display_info.current_h
-    except pygame.error:
-        pass
+    print("[Gacha Android] creating fullscreen SCALED display", flush=True)
     screen = pygame.display.set_mode(
         (android_width, android_height),
-        pygame.FULLSCREEN,
+        pygame.FULLSCREEN | pygame.SCALED,
     )
     WIDTH, HEIGHT = screen.get_size()
+    print(
+        f"[Gacha Android] display ready: driver={pygame.display.get_driver()}, "
+        f"size={WIDTH}x{HEIGHT}, flags={screen.get_flags()}",
+        flush=True,
+    )
 else:
     screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
     pygame.display.set_caption("Totally not a Genshin Impact wishing replica")

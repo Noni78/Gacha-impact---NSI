@@ -50,16 +50,54 @@ jobs:
       - name: Validate Python source syntax
         run: python -m compileall -q main.py library.py settings.py character.py
 
-      - name: Cache Android build toolchain
-        uses: actions/cache@v4
-        with:
-          path: |
-            .buildozer
-            ~/.buildozer
-          key: android-pygame-${{ runner.os }}-${{ hashFiles('buildozer.spec', 'p4a-recipes/**', '.github/workflows/android-pygame.yml') }}
+      - name: Remove all previous Android build state
+        run: |
+          rm -rf .buildozer ~/.buildozer
+          mkdir -p bin
 
-      - name: Build the original Pygame project
+      - name: Build the original Pygame project from scratch
         run: buildozer -v android debug
+
+      - name: Validate APK archive and ARM64 native libraries
+        run: |
+          python - <<'PY'
+          import glob
+          import tarfile
+          import zipfile
+          from io import BytesIO
+
+          apks = glob.glob("bin/*.apk")
+          if len(apks) != 1:
+              raise SystemExit(f"Expected exactly one APK, found: {apks}")
+          apk_path = apks[0]
+          with zipfile.ZipFile(apk_path) as apk:
+              bad = apk.testzip()
+              if bad:
+                  raise SystemExit(f"Corrupt APK ZIP member: {bad}")
+              names = set(apk.namelist())
+              required = {
+                  "AndroidManifest.xml", "classes.dex", "assets/private.tar",
+                  "lib/arm64-v8a/libmain.so", "lib/arm64-v8a/libSDL2.so",
+                  "lib/arm64-v8a/libpybundle.so",
+                  "lib/arm64-v8a/libopencv_core.so",
+                  "lib/arm64-v8a/libopencv_videoio.so",
+              }
+              missing = sorted(required - names)
+              if missing:
+                  raise SystemExit(f"APK missing required entries: {missing}")
+              with tarfile.open(fileobj=BytesIO(apk.read("assets/private.tar"))) as app:
+                  app_files = set(app.getnames())
+                  app_required = {
+                      "main.pyc", "settings.pyc", "library.pyc", "character.pyc",
+                      "videos/pull_3_star.mp4", "videos/pull_4_star.mp4",
+                      "videos/pull_5_star.mp4", "videos/capture_radiance.gif",
+                      "font/genshin.ttf",
+                  }
+                  app_missing = sorted(app_required - app_files)
+                  if app_missing:
+                      raise SystemExit(f"APK missing game assets: {app_missing}")
+          print(f"Validated {apk_path}: ZIP OK, ARM64 SDL2/Python/OpenCV and game assets present")
+          PY
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
