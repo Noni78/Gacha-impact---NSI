@@ -287,34 +287,35 @@ def wish(pity_5_star, pity_4_star, garanti, current_banner_index, stack_capture_
     capture_radiance = False
 
     if wish_rarete == "5_star":
-        if stack_capture_radiance < 2:
-            print("<--5050 en cours-->")
-            if not garanti:
+        if garanti:
+            new_garanti = False
+        elif not garanti:
+            if stack_capture_radiance < 2:
                 if random.random() <= 0.5:
+                    print("<--5050 gagné-->")
                     new_garanti = False
                     new_stack_capture_radiance = max(0, stack_capture_radiance - 1)
                 else:
+                    print("<--5050 perdu-->")
                     new_garanti = True
                     wish_rarete = "5_star_perma"
                     new_stack_capture_radiance = stack_capture_radiance + 1
+            elif stack_capture_radiance == 2:
+                if random.random() <= 0.55:
+                    print("<-- 5545 gagné -->")
+                    new_garanti = False
+                    capture_radiance = True
+                    new_stack_capture_radiance = 1
+                else:
+                    print("<-- 5545 perdu -->")
+                    new_garanti = True
+                    wish_rarete = "5_star_perma"
+                    new_stack_capture_radiance = 3
             else:
-                new_garanti = False
-                new_stack_capture_radiance = max(0, stack_capture_radiance - 1)
-        elif stack_capture_radiance == 2:
-            print("<-- 5545 en cours -->")
-            if random.random() <= 0.55:
+                print("<-- Vous avez si peu de chance que je vous fait gagner celui la -->")
                 new_garanti = False
                 capture_radiance = True
                 new_stack_capture_radiance = 1
-            else:
-                new_garanti = True
-                wish_rarete = "5_star_perma"
-                new_stack_capture_radiance = 3
-        else:
-            print("<-- Vous avez si peu de chance que je vous fait gagner celui la -->")
-            new_garanti = False
-            capture_radiance = True
-            new_stack_capture_radiance = 1
 
     if wish_rarete == "4_star":
         featured_4_stars = characters["5_star"][current_banner_index].get("featured_4_star", [])
