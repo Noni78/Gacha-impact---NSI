@@ -145,9 +145,21 @@ HEIGHT = 810
 WIDTH = int(HEIGHT * 16 / 9)
 
 if IS_ANDROID:
-    # Android already owns a fullscreen SDL window. Ask for its actual display
-    # size instead of forcing a desktop-sized resizable window.
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    # Avoid SDL's (0, 0) desktop-size sentinel during Android startup.
+    # On some SDL2/Android combinations it can leave the window surface in an
+    # invalid state while pygame.display.set_mode clears the initial surface.
+    # Request a concrete 16:9 fullscreen surface; SDL scales it to the device.
+    android_width, android_height = 1280, 720
+    try:
+        display_info = pygame.display.Info()
+        if display_info.current_w > 0 and display_info.current_h > 0:
+            android_width, android_height = display_info.current_w, display_info.current_h
+    except pygame.error:
+        pass
+    screen = pygame.display.set_mode(
+        (android_width, android_height),
+        pygame.FULLSCREEN,
+    )
     WIDTH, HEIGHT = screen.get_size()
 else:
     screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
