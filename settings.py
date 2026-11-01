@@ -6,6 +6,14 @@ import pygame
 
 from character import *
 
+# python-for-android exposes these variables in its application process.
+# Avoid desktop-only resizable windows and create the Android display once.
+IS_ANDROID = (
+    sys.platform == "android"
+    or "ANDROID_ARGUMENT" in os.environ
+    or "ANDROID_PRIVATE" in os.environ
+)
+
 # SDL translates Android touch taps into standard Pygame mouse events.
 os.environ.setdefault("SDL_MOUSE_TOUCH_EVENTS", "1")
 
@@ -135,9 +143,16 @@ proba_effective_5_star = proba_init_5_star * chance_globale
 
 HEIGHT = 810
 WIDTH = int(HEIGHT * 16 / 9)
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
-pygame.display.set_caption("Totally not a Genshin Impact wishing replica")
-pygame.display.set_icon(pygame.image.load("img/icon.png").convert_alpha())
+
+if IS_ANDROID:
+    # Android already owns a fullscreen SDL window. Ask for its actual display
+    # size instead of forcing a desktop-sized resizable window.
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    WIDTH, HEIGHT = screen.get_size()
+else:
+    screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+    pygame.display.set_caption("Totally not a Genshin Impact wishing replica")
+    pygame.display.set_icon(pygame.image.load("img/icon.png").convert_alpha())
 mouse_pos = pygame.mouse.get_pos()
 wish_rarete = None
 wish_splash_art = None
@@ -145,14 +160,22 @@ animation_progress = 0.0
 force_ratio_16_9 = False  # Passe a True pour forcer le ratio 16:9
 
 # --- Cursor --- #
-try:
-    cursor_img = pygame.image.load("img/Cursor.png").convert_alpha()
-    cursor_size = int(HEIGHT * 32 / 900)
-    cursor_img = pygame.transform.scale(cursor_img, (cursor_size, cursor_size))
-    pygame.mouse.set_visible(False)
-    use_custom_cursor = True
-except Exception:
+if IS_ANDROID:
+    # Touch input is used on phones; a desktop mouse cursor is unnecessary.
+    cursor_img = None
+    cursor_size = 0
     use_custom_cursor = False
+else:
+    try:
+        cursor_img = pygame.image.load("img/Cursor.png").convert_alpha()
+        cursor_size = int(HEIGHT * 32 / 900)
+        cursor_img = pygame.transform.scale(cursor_img, (cursor_size, cursor_size))
+        pygame.mouse.set_visible(False)
+        use_custom_cursor = True
+    except Exception:
+        cursor_img = None
+        cursor_size = 0
+        use_custom_cursor = False
 
 # --- Boutons --- #
 button_height = int(HEIGHT * 60 / 900)
